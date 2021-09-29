@@ -77,6 +77,7 @@ public class BleManager {
     public boolean getIsConnecting() {
         return isConnecting;
     }
+
     private static class BleManagerHolder {
         private static final BleManager sBleManager = new BleManager();
     }
