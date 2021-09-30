@@ -8,13 +8,15 @@ import android.os.Handler;
 import android.util.Log;
 import com.example.livecare.bluetoothsdk.initFunctions.enums.BleDevicesName;
 import com.example.livecare.bluetoothsdk.initFunctions.enums.TypeBleDevices;
+import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
+import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.callback.BleScanCallback;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.data.BleDevice;
 import java.util.Calendar;
 import java.util.List;
 
-import static com.example.livecare.bluetoothsdk.initFunctions.Constants.BLE_BlOOD_PRESSURE_ANDES_FIT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_ANDES_FIT;
 
 public class TeleHealthScanBackgroundPresenter {
 
@@ -113,11 +115,11 @@ public class TeleHealthScanBackgroundPresenter {
                // }
            // }
         }else {
-            if(Utils.isNotForegroundBleDeviceConnected()){
+            //if(Utils.isNotForegroundBleDeviceConnected()){
                 if(teleHealthService!=null){
                     teleHealthService.checkIfBackGroundIHealthIsConnected();
                 }
-            }
+           // }
         }
         return true;
     }

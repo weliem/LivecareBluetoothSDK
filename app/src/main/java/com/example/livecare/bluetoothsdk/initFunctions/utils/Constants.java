@@ -1,4 +1,4 @@
-package com.example.livecare.bluetoothsdk.initFunctions;
+package com.example.livecare.bluetoothsdk.initFunctions.utils;
 
 public class Constants {
     public static boolean ViatomScaleConnected;

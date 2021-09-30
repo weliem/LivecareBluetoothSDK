@@ -17,6 +17,8 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+
+import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.data.BleDevice;
 

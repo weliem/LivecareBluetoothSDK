@@ -1,4 +1,4 @@
-package com.example.livecare.bluetoothsdk.initFunctions;
+package com.example.livecare.bluetoothsdk.initFunctions.utils;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Handler;
 import com.example.livecare.bluetoothsdk.MyApplication;
+import com.example.livecare.bluetoothsdk.initFunctions.TeleHealthService;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
 
 import static android.bluetooth.BluetoothProfile.GATT;
@@ -57,11 +58,11 @@ public class Utils {
     }
 
     public static boolean isAnyBleDeviceConnecting() {
-        return BleManager.getInstance().getIsConnecting() || IHealthConnectedDevices.getInstance().getIsConnecting();
+        return BleManager.getInstance().getIsConnecting()/* || IHealthConnectedDevices.getInstance().getIsConnecting()*/;
     }
 
-    public static boolean isNotForegroundBleDeviceConnected() {
-        if(!BleManager.getInstance().getBluetoothManager().getConnectedDevices(GATT).isEmpty()){
+    /*public static boolean isNotForegroundBleDeviceConnected() {
+        if(!BleManager.getInstance().getBluetoothManager().getConnectedDevices(GATT).isEmpty()) {
             if(BleManager.getInstance().getBluetoothManager().getConnectedDevices(GATT).size() > IHealthConnectedDevices.getInstance().getAllBackgroundBleMacList().size()){
                 return false;
             }else {
@@ -70,7 +71,7 @@ public class Utils {
         }else {
             return !Constants.ViatomScaleConnected;
         }
-    }
+    }*/
 
 
 }
