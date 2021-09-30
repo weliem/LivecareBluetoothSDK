@@ -6,11 +6,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothDemo;
+import com.example.livecare.bluetoothsdk.initFunctions.di.component.BluetoothComponent;
+import com.example.livecare.bluetoothsdk.initFunctions.di.component.DaggerBluetoothComponent;
+import com.example.livecare.bluetoothsdk.initFunctions.di.module.BluetoothModule;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
+
+import javax.inject.Inject;
 
 public class LiveCareMainClass {
     private String TAG = "LiveCareMainClass";
     private Application application;
+
+    private BluetoothComponent bluetoothComponent;
+
+    @Inject
+    BluetoothDemo bluetoothDemo;
 
     public static LiveCareMainClass getInstance() {
         return LiveCareHolder.liveCareMainClass;
@@ -20,12 +31,25 @@ public class LiveCareMainClass {
         private static final LiveCareMainClass liveCareMainClass = new LiveCareMainClass();
     }
 
+    public BluetoothComponent getBluetoothComponent() {
+        if (bluetoothComponent == null) {
+            bluetoothComponent = DaggerBluetoothComponent.builder()
+                    .bluetoothModule(new BluetoothModule(application))
+                    .build();
+        }
+        return bluetoothComponent;
+    }
+
     public void init(Application app) {
         application = app;
         IntentFilter filter = new IntentFilter();
         filter.addAction("update.ui.with.device");
         app.registerReceiver(bluetoothDeviceReceiver, filter);
         Utils.startTeleHealthService();
+
+        getBluetoothComponent().inject(app);
+
+        //bluetoothDemo.displayBle();
     }
 
     private final BroadcastReceiver bluetoothDeviceReceiver = new BroadcastReceiver() {

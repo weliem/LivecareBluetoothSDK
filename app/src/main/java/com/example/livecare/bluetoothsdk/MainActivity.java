@@ -7,29 +7,18 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass;
-import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothConnection;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
     private final int MULTIPLE_PERMISSIONS = 10;
-
-    @Inject
-    BluetoothConnection bluetoothConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkAndRequestForPermission();
-
-        //MyApplication.get(this).getNetComponent().inject(this);
-
-        //bluetoothConnection.setMessage();
     }
 
     public void checkAndRequestForPermission() {
