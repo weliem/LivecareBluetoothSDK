@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
                 android.Manifest.permission.ACCESS_FINE_LOCATION
         };
         if (checkPermissions(permissions, MULTIPLE_PERMISSIONS)) {
+            LiveCareMainClass.getInstance().init(getApplication());
             Log.d(TAG, "checkAndRequestForPermission: accepted");
         }
     }

@@ -7,7 +7,7 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Handler;
 import com.example.livecare.bluetoothsdk.MyApplication;
-import com.example.livecare.bluetoothsdk.initFunctions.TeleHealthService;
+import com.example.livecare.bluetoothsdk.initFunctions.service.TeleHealthService;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
 
 import static android.bluetooth.BluetoothProfile.GATT;

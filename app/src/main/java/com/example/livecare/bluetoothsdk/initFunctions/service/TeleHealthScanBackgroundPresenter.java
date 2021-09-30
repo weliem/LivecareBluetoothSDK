@@ -1,4 +1,4 @@
-package com.example.livecare.bluetoothsdk.initFunctions;
+package com.example.livecare.bluetoothsdk.initFunctions.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

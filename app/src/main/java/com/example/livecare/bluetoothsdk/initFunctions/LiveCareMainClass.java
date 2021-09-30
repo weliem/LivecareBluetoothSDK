@@ -25,7 +25,6 @@ public class LiveCareMainClass {
         IntentFilter filter = new IntentFilter();
         filter.addAction("update.ui.with.device");
         app.registerReceiver(bluetoothDeviceReceiver, filter);
-
         Utils.startTeleHealthService();
     }
 
@@ -39,6 +38,9 @@ public class LiveCareMainClass {
     };
 
     public void destroy(){
-        application.unregisterReceiver(bluetoothDeviceReceiver);
+        Utils.stopTeleHealthService();
+        if(application!=null){
+            application.unregisterReceiver(bluetoothDeviceReceiver);
+        }
     }
 }

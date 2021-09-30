@@ -1,4 +1,4 @@
-package com.example.livecare.bluetoothsdk.initFunctions;
+package com.example.livecare.bluetoothsdk.initFunctions.service;
 
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.data.BleDevice;

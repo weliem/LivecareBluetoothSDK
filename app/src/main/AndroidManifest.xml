@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".initFunctions.TeleHealthService" />
+        <service android:name=".initFunctions.service.TeleHealthService" />
     </application>
 
 </manifest>
