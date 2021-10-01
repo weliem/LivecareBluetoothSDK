@@ -13,8 +13,45 @@ import com.example.livecare.bluetoothsdk.MyApplication;
 import com.example.livecare.bluetoothsdk.initFunctions.service.TeleHealthService;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
 import java.lang.reflect.Method;
+import java.util.Calendar;
 import java.util.Set;
 import static android.bluetooth.BluetoothProfile.GATT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BC57;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BM67;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_CVS;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_FORA;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_JUMPER;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_TRANSTEK;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BP_WELLUE;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_ANDES_FIT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_BP;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_INDIE_HEALTH;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_TNG_FORA;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_ONE_TOUCH;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_TRUE_METRIX;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_TRUE_METRIX_AIR_CVS;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_ANDES_FIT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_BERRYMED;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FORA;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FS2OF1;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FS2OF2;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_MASIMO;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_NONIN;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_TAI_DOC;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_RING_VIATOM;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_ANDES_FIT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_FORA;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_INDIE_HEALTH;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_INDIE_HEALTH_SMALL;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_JUMPER;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SPIROMETER_ANDES_FIT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_AET_WD;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_ANDES_FIT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_JUMPER;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_JUMPER1;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_FORA_IR20;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_UNAAN;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_VIATOM;
 
 public class Utils {
 
@@ -92,4 +129,79 @@ public class Utils {
         } catch (Exception ignored) {}
     }
 
+    public static void teleHealthScanBroadcastReceiver(boolean startScan) {
+        if(!startScan){
+            Intent local = new Intent();
+            local.setAction("teleHealthScan.BroadcastReceiver");
+            local.putExtra("startScan", startScan);
+            MyApplication.getInstance().sendBroadcast(local);
+        }
+    }
+
+    public static void setTimeOnDisconnect(String deviceName) {
+        if (deviceName == null) {
+            return;
+        }
+        switch (deviceName) {
+            case BLE_PULSE_OXIMETER_BERRYMED:
+            case BLE_PULSE_OXIMETER_FS2OF1:
+            case BLE_PULSE_OXIMETER_FS2OF2:
+            case BLE_PULSE_OXIMETER_ANDES_FIT:
+            case BLE_PULSE_OXIMETER_FORA:
+            case BLE_PULSE_OXIMETER_MASIMO:
+            case BLE_PULSE_OXIMETER_TAI_DOC:
+                Constants.currentTimeForLastTelehealthServiceSpO2 = Calendar.getInstance().getTime().getTime();
+                break;
+
+            case BLE_SCALE_ANDES_FIT:
+            case BLE_SCALE_INDIE_HEALTH:
+            case BLE_SCALE_INDIE_HEALTH_SMALL:
+            case BLE_SCALE_FORA:
+            case BLE_SCALE_JUMPER:
+                Constants.currentTimeForLastTelehealthServiceScale = Calendar.getInstance().getTime().getTime();
+                break;
+
+            case BLE_TEMP_ANDES_FIT:
+            case BLE_TEMP_AET_WD:
+            case BLE_THERMOMETER_FORA_IR20:
+            case BLE_THERMOMETER_VIATOM:
+            case BLE_THERMOMETER_UNAAN:
+                Constants.currentTimeForLastTelehealthServiceTEMP = Calendar.getInstance().getTime().getTime();
+                break;
+
+            case BLE_BlOOD_PRESSURE_BP:
+            case BLE_BLOOD_PRESSURE_TRANSTEK:
+            case BLE_BlOOD_PRESSURE_ANDES_FIT:
+            case BLE_BlOOD_PRESSURE_TNG_FORA:
+            case BLE_BlOOD_PRESSURE_INDIE_HEALTH:
+            case BLE_BLOOD_PRESSURE_FORA:
+            case BLE_BP_WELLUE:
+            case BLE_BLOOD_PRESSURE_BEURER_BM67:
+            case BLE_BLOOD_PRESSURE_BEURER_BC57:
+            case BLE_BLOOD_PRESSURE_CVS:
+            case BLE_BLOOD_PRESSURE_JUMPER:
+                Constants.currentTimeForLastTelehealthServiceBP = Calendar.getInstance().getTime().getTime();
+                break;
+
+            case BLE_GLUCOMETER_TRUE_METRIX_AIR_CVS:
+            case BLE_GLUCOMETER_TRUE_METRIX:
+                Constants.currentTimeForLastTelehealthServiceGL = Calendar.getInstance().getTime().getTime();
+                break;
+
+            case BLE_SPIROMETER_ANDES_FIT:
+                Constants.currentTimeForSpirometer = Calendar.getInstance().getTime().getTime();
+                break;
+
+            default:
+                if (deviceName.contains(BLE_TEMP_JUMPER) || deviceName.contains(BLE_TEMP_JUMPER1)) {
+                    Constants.currentTimeForLastTelehealthServiceTEMP = Calendar.getInstance().getTime().getTime();
+                } else if (deviceName.contains(BLE_RING_VIATOM)) {
+                    Constants.currentTimeForLastTelehealthServiceSpO2 = Calendar.getInstance().getTime().getTime();
+                } else if (deviceName.contains(BLE_GLUCOMETER_ONE_TOUCH)) {
+                    Constants.currentTimeForLastTelehealthServiceGL = Calendar.getInstance().getTime().getTime();
+                } else if (deviceName.startsWith(BLE_PULSE_OXIMETER_NONIN)) {
+                    Constants.currentTimeForLastTelehealthServiceSpO2 = Calendar.getInstance().getTime().getTime();
+                }
+        }
+    }
 }

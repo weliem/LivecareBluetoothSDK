@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 import com.example.livecare.bluetoothsdk.MyApplication;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothConnection;
 import com.example.livecare.bluetoothsdk.initFunctions.data.DataManager;
 import com.example.livecare.bluetoothsdk.initFunctions.di.component.DaggerLiveCareMainComponent;
 import com.example.livecare.bluetoothsdk.initFunctions.di.component.LiveCareMainComponent;
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 public class LiveCareMainClass {
     private String TAG = "LiveCareMainClass";
     private Application application;
+    private BluetoothConnection bluetoothConnection;
 
     @Inject
     DataManager mDataManager;
@@ -47,7 +49,7 @@ public class LiveCareMainClass {
         app.registerReceiver(bluetoothDeviceReceiver, filter);
         Utils.startTeleHealthService();
         getActivityComponent().inject(this);
-
+        bluetoothConnection = new BluetoothConnection();
         //String token = mDataManager.getAccessToken();
         //mDataManager.setMessage();
     }
@@ -58,6 +60,9 @@ public class LiveCareMainClass {
             Log.d(TAG, "onReceive: "+intent.getExtras().getParcelable("bluetoothDevice"));
             Log.d(TAG, "onReceive: "+intent.getStringExtra("devicesOrigin"));
             Log.d(TAG, "onReceive: "+intent.getStringExtra("deviceName"));
+
+            bluetoothConnection.addDeviceFromScanning(intent.getExtras().getParcelable("bluetoothDevice"),
+                    intent.getStringExtra("devicesOrigin"),intent.getStringExtra("deviceName"));
         }
     };
 
