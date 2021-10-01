@@ -31,7 +31,7 @@ public class LiveCareMainClass {
         private static final LiveCareMainClass liveCareMainClass = new LiveCareMainClass();
     }
 
-    public BluetoothComponent getBluetoothComponent() {
+    private BluetoothComponent getBluetoothComponent() {
         if (bluetoothComponent == null) {
             bluetoothComponent = DaggerBluetoothComponent.builder()
                     .bluetoothModule(new BluetoothModule(application))
@@ -41,6 +41,7 @@ public class LiveCareMainClass {
     }
 
     public void init(Application app) {
+        Log.d(TAG, "init: ");
         application = app;
         IntentFilter filter = new IntentFilter();
         filter.addAction("update.ui.with.device");
