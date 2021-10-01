@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -17,12 +16,9 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-
-import com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.data.BleDevice;
-
 import java.util.List;
 
 public class TeleHealthService extends Service {
@@ -57,15 +53,15 @@ public class TeleHealthService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null) {
-            if (intent.getAction() != null) {
-               /* if(intent.getAction().equals(CONNECT_IHEALTH_DEVICE)){
+       /* if (intent != null) {
+             if (intent.getAction() != null) {
+               if(intent.getAction().equals(CONNECT_IHEALTH_DEVICE)){
                     if(iHealthConnection!=null){
                         iHealthConnection.startScanning();
                     }
-                }*/
+                }
             }
-        }
+        }*/
         return START_NOT_STICKY;
     }
 
@@ -139,10 +135,11 @@ public class TeleHealthService extends Service {
         }*/
     }
 
-    public void setDeviceFound(String deviceName, BleDevice bleDevice, String devicesOrigin, boolean isBackground) {
+    public void setDeviceFound(String deviceName, BleDevice bleDevice, String devicesOrigin) {
         this.bleDevice = bleDevice;
-        if (devicesOrigin.equals("1")){
-          /*  if(bleDevice.getName()!=null){
+        sendDataToTeleHealthReceiver(deviceName,bleDevice,devicesOrigin);
+      /*  if (devicesOrigin.equals("1")){
+            if(bleDevice.getName()!=null){
                 if(iHealthConnection == null) {
                     iHealthConnection = new IHealthConnection(this);
                 }
@@ -165,17 +162,17 @@ public class TeleHealthService extends Service {
                 }else if(bleDevice.getName().contains(iHealthDevicesManager.TYPE_HS2)){
                     iHealthConnection.initFunction(deviceName,iHealthDevicesManager.TYPE_HS2, bleDevice,isBackground);
                 }
-            }*/
+            }
         }else {
-            sendDataToTeleHealthReceiver(deviceName,bleDevice,devicesOrigin);
-        }
-    }
 
-    public void checkIfBackGroundIHealthIsConnected() {
-       /* if(iHealthConnection != null) {
-            iHealthConnection.checkIfBackGroundIHealthIsConnected();
         }*/
     }
+
+   /* public void checkIfBackGroundIHealthIsConnected() {
+        if(iHealthConnection != null) {
+            iHealthConnection.checkIfBackGroundIHealthIsConnected();
+        }
+    }*/
 
     public void sendDataToTeleHealthReceiver(String deviceName, BleDevice bleDevice, String devicesOrigin){
         int delay;
@@ -205,7 +202,7 @@ public class TeleHealthService extends Service {
 
     private void startForegroundService() {
         onCreateMethod();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             startMyOwnForeground();
         else {
             createNotificationChannel();
@@ -215,7 +212,7 @@ public class TeleHealthService extends Service {
                     .setContentIntent(pendingIntent)
                     .build();
             startForeground(1, notification);
-        }
+        }*/
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

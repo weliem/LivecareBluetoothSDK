@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import com.example.livecare.bluetoothsdk.initFunctions.enums.BleDevicesName;
-import com.example.livecare.bluetoothsdk.initFunctions.enums.TypeBleDevices;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
@@ -25,6 +25,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_TRANSTEK;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BP_WELLUE;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_ANDES_FIT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_BP;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_INDIE_HEALTH;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_TNG_FORA;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_CARDIOBEAT;
@@ -105,7 +106,7 @@ public class TeleHealthScanBackgroundPresenter {
         }
     };
 
-    public TeleHealthScanBackgroundPresenter(TeleHealthService teleHealthService) {
+    TeleHealthScanBackgroundPresenter(TeleHealthService teleHealthService) {
         this.teleHealthService = teleHealthService;
         startScan = true;
         IntentFilter filter = new IntentFilter();
@@ -113,9 +114,9 @@ public class TeleHealthScanBackgroundPresenter {
         teleHealthService.registerReceiver(teleHealthScanBroadcastReceiver, filter);
     }
 
-    public void iniFunction() {
+    void iniFunction() {
         startTime = System.currentTimeMillis();
-        handler = new Handler();
+        handler = new Handler(Looper.getMainLooper());
 
         if (!"Link+".equalsIgnoreCase(BleManager.getInstance().getBluetoothAdapter().getName())) {
             BleManager.getInstance().getBluetoothAdapter().setName("Link+");
@@ -178,13 +179,13 @@ public class TeleHealthScanBackgroundPresenter {
                     return Utils.isAnyBleDeviceConnecting();
                // }
            // }
-        }else {
+        }//else {
             //if(Utils.isNotForegroundBleDeviceConnected()){
-                if(teleHealthService!=null){
-                    teleHealthService.checkIfBackGroundIHealthIsConnected();
-                }
+               // if(teleHealthService!=null){
+                   // teleHealthService.checkIfBackGroundIHealthIsConnected();
+               // }
            // }
-        }
+        //}
         return true;
     }
 
@@ -192,7 +193,7 @@ public class TeleHealthScanBackgroundPresenter {
         String iHealthDevices = "1";//all iHealth devices will go with this flag to ScanActivity
         String otherDevices = "2";//all other devices will go with this flag to ScanActivity
         String sdkDevices = "3";//VivaLNK devices will go with this flag to ScanActivity
-        //String fitnessDevices = "4";//fitnessDevices devices will go with this flag to ScanActivity
+        String fitnessDevices = "4";//fitnessDevices devices will go with this flag to ScanActivity
 
         if (Calendar.getInstance().getTime().getTime() - currentTimeForLastTelehealthService < 5000) {
             return;
@@ -200,12 +201,12 @@ public class TeleHealthScanBackgroundPresenter {
         if (device.getName() != null) {
             Log.d(TAG, "scanDevicesResponse: "+ device.getName());
             switch (device.getName()) {
-                //case BLE_BlOOD_PRESSURE_BP:
+                case BLE_BlOOD_PRESSURE_BP:
                 case BLE_BlOOD_PRESSURE_ANDES_FIT:
                 case BLE_BLOOD_PRESSURE_TRANSTEK:
                 case BLE_BLOOD_PRESSURE_JUMPER:
                     if ((Calendar.getInstance().getTime().getTime() - Constants.currentTimeForLastTelehealthServiceBP > 20000)) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.BP.stringValue, device, otherDevices, TypeBleDevices.BP.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.BP.stringValue, device, otherDevices);
                     }
                     break;
 
@@ -217,20 +218,20 @@ public class TeleHealthScanBackgroundPresenter {
                 case BLE_BLOOD_PRESSURE_BEURER_BC57:
                 case BLE_BLOOD_PRESSURE_BEURER_BM54:
                 case BLE_BLOOD_PRESSURE_CVS:
-                    decisionFunctionAfterGettingBTMac(BleDevicesName.BP.toString(), device, otherDevices, TypeBleDevices.BP.stringValue,false);
+                    decisionFunctionAfterGettingBTMac(BleDevicesName.BP.toString(), device, otherDevices);
                     break;
 
                 case BLE_GLUCOMETER_PREMIUM_FORA:
                 case BLE_GLUCOMETER_INDIE_HEALTH:
                 case BLE_GLUCOMETER_PREMIUM_FORA2:
                 case BLE_GLUCOMETER_TAI_DOC:
-                    decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices, TypeBleDevices.Gl.stringValue,false);
+                    decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices);
                     break;
 
                 case BLE_GLUCOMETER_TRUE_METRIX_AIR_CVS:
                 case BLE_GLUCOMETER_TRUE_METRIX:
                     if (Calendar.getInstance().getTime().getTime() - Constants.currentTimeForLastTelehealthServiceGL > 30000) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices, TypeBleDevices.Gl.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices);
                     }
                     break;
 
@@ -241,74 +242,74 @@ public class TeleHealthScanBackgroundPresenter {
                 case BLE_PULSE_OXIMETER_FORA:
                 case BLE_PULSE_OXIMETER_MASIMO:
                     if (Calendar.getInstance().getTime().getTime() - Constants.currentTimeForLastTelehealthServiceSpO2 > 30000) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.SpO2.toString(), device, otherDevices, TypeBleDevices.SpO2.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.SpO2.toString(), device, otherDevices);
                     }
                     break;
 
                 case BLE_PULSE_OXIMETER_TAI_DOC:
                 case BLE_PULSE_OXIMETER_BEURER_PO60:
                 case BLE_PULSE_OXIMETER_JUMPER:
-                    decisionFunctionAfterGettingBTMac(BleDevicesName.SpO2.toString(), device, otherDevices, TypeBleDevices.SpO2.stringValue,false);
+                    decisionFunctionAfterGettingBTMac(BleDevicesName.SpO2.toString(), device, otherDevices);
                     break;
 
                 case BLE_PULSE_OXIMETER_IHEALTH:
-                    decisionFunctionAfterGettingBTMac(BleDevicesName.SpO2.toString(), device, iHealthDevices, TypeBleDevices.SpO2.stringValue, false);
+                    decisionFunctionAfterGettingBTMac(BleDevicesName.SpO2.toString(), device, iHealthDevices);
                     break;
 
                 case BLE_SCALE_ANDES_FIT:
                 case BLE_SCALE_INDIE_HEALTH_SMALL:
                 case BLE_SCALE_JUMPER:
                     if (Calendar.getInstance().getTime().getTime() - Constants.currentTimeForLastTelehealthServiceScale > 20000) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.WS.toString(), device, otherDevices, TypeBleDevices.WS.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.WS.toString(), device, otherDevices);
                     }
                     break;
 
                 case BLE_SCALE_INDIE_HEALTH:
                 case BLE_SCALE_FORA:
-                    decisionFunctionAfterGettingBTMac(BleDevicesName.WS.toString(), device, otherDevices, TypeBleDevices.WS.stringValue,false);
+                    decisionFunctionAfterGettingBTMac(BleDevicesName.WS.toString(), device, otherDevices);
                     break;
 
                 case BLE_SCALE_SMG4:
                 case BLE_SCALE_VIATOM:
                     if (Calendar.getInstance().getTime().getTime() - Constants.currentTimeForLastTelehealthServiceScale > 30000) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.WS.toString(), device, sdkDevices, TypeBleDevices.WS.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.WS.toString(), device, sdkDevices);
                     }
                     break;
 
                 case BLE_TEMP_ANDES_FIT:
                     if (!BleManager.getInstance().isConnected(device) && BleManager.getInstance().getConnectState(device) == 0 && Calendar.getInstance().getTime().getTime() - Constants.currentTimeForLastTelehealthServiceTEMP > 70000) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices, TypeBleDevices.Temp.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices);
                     }
                     break;
 
                 case BLE_TEMP_AET_WD:
                 case BLE_THERMOMETER_FORA_IR20:
-                    decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices, TypeBleDevices.Temp.stringValue,false);
+                    decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices);
                     break;
 
                 case BLE_THERMOMETER_VIATOM:
                     if (!BleManager.getInstance().isConnected(device) && BleManager.getInstance().getConnectState(device) == 0 && Calendar.getInstance().getTime().getTime() - Constants.currentTimeForLastTelehealthServiceTEMP > 80000) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices, TypeBleDevices.Temp.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices);
                     }
                     break;
 
                 case BLE_THERMOMETER_UNAAN:
                     if (Calendar.getInstance().getTime().getTime() - Constants.currentTimeForLastTelehealthServiceTEMP > 30000) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices, TypeBleDevices.Temp.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices);
                     }
                     break;
 
                 case BLE_ECG_IHEALTH:
-                    decisionFunctionAfterGettingBTMac(BleDevicesName.ECG.toString(), device, iHealthDevices, TypeBleDevices.ECG.stringValue,false);
+                    decisionFunctionAfterGettingBTMac(BleDevicesName.ECG.toString(), device, iHealthDevices);
                     break;
 
                 case BLE_CARDIOBEAT:
-                    decisionFunctionAfterGettingBTMac(BleDevicesName.ECG.toString(), device, otherDevices, TypeBleDevices.ECG.stringValue,false);
+                    decisionFunctionAfterGettingBTMac(BleDevicesName.ECG.toString(), device, otherDevices);
                     break;
 
                 case BLE_SCALE_ARBOLEAF:
                     if (Calendar.getInstance().getTime().getTime() - currentTimeForLastTelehealthService > 10000) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.WS.toString(), device, sdkDevices, TypeBleDevices.WS.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.WS.toString(), device, sdkDevices);
                     }
                     break;
 
@@ -320,7 +321,7 @@ public class TeleHealthScanBackgroundPresenter {
 
                 case BLE_SPIROMETER_ANDES_FIT:
                     if (Calendar.getInstance().getTime().getTime() - Constants.currentTimeForSpirometer > 100000) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.Spirometer.toString(), device, otherDevices, TypeBleDevices.Spirometer.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.Spirometer.toString(), device, otherDevices);
                     }
                     break;
 
@@ -349,41 +350,41 @@ public class TeleHealthScanBackgroundPresenter {
                         }
                     } else */if (device.getName().contains(BLE_OMRON_BP1) || device.getName().contains(BLE_OMRON_BP2) ||
                             device.getName().contains(BLE_OMRON_BP3) || device.getName().contains(BLE_OMRON_BP4)) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.BP.toString(), device, otherDevices, TypeBleDevices.BP.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.BP.toString(), device, otherDevices);
 
                     } else if (device.getName().startsWith(BLE_GLUCOMETER_CARESENS_S)) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices, TypeBleDevices.Gl.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices);
                     } else if (device.getName().contains(BLE_GLUCOMETER_CONTOUR)) {
                         if (Utils.checkPairedDevices(device.getMac())) {
-                            decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices, TypeBleDevices.Gl.stringValue,false);
+                            decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices);
                         } else {
                             try {
                                 if (Utils.createBond(device.getDevice())) {
-                                    handler.postDelayed(() -> decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices, TypeBleDevices.Gl.stringValue,false), 2000);
+                                    handler.postDelayed(() -> decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices), 2000);
                                 }
                             } catch (Exception exception) {
                                 exception.printStackTrace();
                             }
                         }
                     } else if (device.getName().contains(BLE_GLUCOMETER_ACCU_CHECK)) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices, TypeBleDevices.Gl.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices);
                     } else if (device.getName().contains(BLE_ECG_VIVALNK)) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.ECG.toString(), device, sdkDevices, TypeBleDevices.ECG.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.ECG.toString(), device, sdkDevices);
                     } else if (device.getName().contains(BLE_PRIZMA)) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.PRIZMA.toString(), device, otherDevices, TypeBleDevices.PRIZMA.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.PRIZMA.toString(), device, otherDevices);
                     } else if (device.getName().contains(BLE_GLUCOMETER_AGAMETRIX_CVS) || device.getName().contains(BLE_GLUCOMETER_AGAMETRIX_UnPaired)) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices, TypeBleDevices.Gl.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices);
                     } else if (device.getName().contains(BLE_GLUCOMETER_ONE_TOUCH)) {
                         if (Calendar.getInstance().getTime().getTime() - Constants.currentTimeForLastTelehealthServiceGL > 120000) {
-                            decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices, TypeBleDevices.Gl.stringValue,false);
+                            decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices);
                         }
                     } else if (device.getName().contains(BLE_TEMP_JUMPER) || device.getName().contains(BLE_TEMP_JUMPER1)) {
                         if (!BleManager.getInstance().isConnected(device) && BleManager.getInstance().getConnectState(device) == 0
                                 && Calendar.getInstance().getTime().getTime() - Constants.currentTimeForLastTelehealthServiceTEMP > 70000) {
-                            decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices, TypeBleDevices.Temp.stringValue,false);
+                            decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices);
                         }
                     } else if (device.getName().contains(BLE_TEMPERATURE_SENSOR_GOVEE)) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices, TypeBleDevices.Temp.stringValue, false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices);
                     } else if (device.getName().contains(BLE_V_ALERT)) {
                         if (!BleManager.getInstance().isConnected(device) && teleHealthService != null) {
                             BleManager.getInstance().cancelScan();
@@ -396,7 +397,7 @@ public class TeleHealthScanBackgroundPresenter {
                     } else if (device.getName().startsWith(BLE_PULSE_OXIMETER_NONIN)) {
                         if (!BleManager.getInstance().isConnected(device) && BleManager.getInstance().getConnectState(device) == 0 &&
                                 Calendar.getInstance().getTime().getTime() - Constants.currentTimeForLastTelehealthServiceSpO2 > 30000) {
-                            decisionFunctionAfterGettingBTMac(BleDevicesName.SpO2.toString(), device, otherDevices, TypeBleDevices.SpO2.stringValue,false);
+                            decisionFunctionAfterGettingBTMac(BleDevicesName.SpO2.toString(), device, otherDevices);
                         }
                     } else if (device.getName().contains(BLE_BLOOD_PRESSURE_AD_UA_651BLE)) {
                         if (Utils.checkPairedDevices(device.getMac())) {
@@ -404,22 +405,22 @@ public class TeleHealthScanBackgroundPresenter {
                         } else {
                             try {
                                 if (Utils.createBond(device.getDevice())) {
-                                    decisionFunctionAfterGettingBTMac(BleDevicesName.BP.toString(), device, otherDevices, TypeBleDevices.BP.stringValue, false);
+                                    decisionFunctionAfterGettingBTMac(BleDevicesName.BP.toString(), device, otherDevices);
                                 }
                             } catch (Exception exception) {
                                 exception.printStackTrace();
                             }
                         }
                     } else if (device.getName() != null && device.getName().contains(BLE_RING_VIATOM)) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.SpO2.toString(), device, otherDevices, TypeBleDevices.SpO2.stringValue,false);
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.SpO2.toString(), device, otherDevices);
                     }
             }
         } else {
             if (device.getMac().contains(BLE_TEMP_VIVALNK)) {
-                decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, sdkDevices, TypeBleDevices.Temp.stringValue,false);
+                decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, sdkDevices);
             } else if (device.getMac().contains(BLE_SCALE_QN_SCALE)) {
                 if (Calendar.getInstance().getTime().getTime() - currentTimeForLastTelehealthService > 10000) {
-                    decisionFunctionAfterGettingBTMac(BleDevicesName.WS.toString(), device, sdkDevices, TypeBleDevices.WS.stringValue,false);
+                    decisionFunctionAfterGettingBTMac(BleDevicesName.WS.toString(), device, sdkDevices);
                 }
             }
         }
@@ -451,14 +452,14 @@ public class TeleHealthScanBackgroundPresenter {
         }
     }
 
-    private void decisionFunctionAfterGettingBTMac(String deviceName, BleDevice device, String iHealthOrOtherDevice, String type, boolean isBackground) {
+    private void decisionFunctionAfterGettingBTMac(String deviceName, BleDevice device, String iHealthOrOtherDevice) {
         if (teleHealthService != null) {
-            teleHealthService.setDeviceFound(deviceName, device, iHealthOrOtherDevice, isBackground);
+            teleHealthService.setDeviceFound(deviceName, device, iHealthOrOtherDevice);
         }
     }
 
 
-    public void onDestroy() {
+    void onDestroy() {
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);
         }
