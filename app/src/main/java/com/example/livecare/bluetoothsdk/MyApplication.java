@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 public class MyApplication extends Application {
     private static MyApplication instance;
-    private String TAG = "MyApplication";
 
     @Inject
     BluetoothConnection bluetoothConnection;

@@ -8,13 +8,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Handler;
+import android.os.Looper;
 import com.example.livecare.bluetoothsdk.MyApplication;
 import com.example.livecare.bluetoothsdk.initFunctions.service.TeleHealthService;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
-
 import java.lang.reflect.Method;
 import java.util.Set;
-
 import static android.bluetooth.BluetoothProfile.GATT;
 
 public class Utils {
@@ -31,27 +30,27 @@ public class Utils {
 
     public static void resetTeleHealthService() {
         stopTeleHealthService();
-        new Handler().postDelayed(Utils::startTeleHealthService, 8000);
+        new Handler(Looper.getMainLooper()).postDelayed(Utils::startTeleHealthService, 8000);
     }
 
     public static void stopTeleHealthService() {
-        if (isMyServiceRunning(TeleHealthService.class)) {
+        if (isMyServiceRunning()) {
             Intent intent = new Intent(MyApplication.getInstance(), TeleHealthService.class);
             MyApplication.getInstance().stopService(intent);
         }
     }
 
     public static void startTeleHealthService() {
-        if (!isMyServiceRunning(TeleHealthService.class)) {
+        if (!isMyServiceRunning()) {
             Intent startIntentNotification = new Intent(MyApplication.getInstance(), TeleHealthService.class);
             MyApplication.getInstance().startService(startIntentNotification);
         }
     }
 
-    public static boolean isMyServiceRunning(Class<?> serviceClass) {
+    private static boolean isMyServiceRunning() {
         ActivityManager manager = (ActivityManager) MyApplication.getInstance().getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
+            if (TeleHealthService.class.getName().equals(service.service.getClassName())) {
                 return true;
             }
         }
@@ -65,18 +64,6 @@ public class Utils {
     public static boolean isAnyBleDeviceConnecting() {
         return BleManager.getInstance().getIsConnecting()/* || IHealthConnectedDevices.getInstance().getIsConnecting()*/;
     }
-
-    /*public static boolean isNotForegroundBleDeviceConnected() {
-        if(!BleManager.getInstance().getBluetoothManager().getConnectedDevices(GATT).isEmpty()) {
-            if(BleManager.getInstance().getBluetoothManager().getConnectedDevices(GATT).size() > IHealthConnectedDevices.getInstance().getAllBackgroundBleMacList().size()){
-                return false;
-            }else {
-                return !Constants.ViatomScaleConnected;
-            }
-        }else {
-            return !Constants.ViatomScaleConnected;
-        }
-    }*/
 
     public static boolean checkPairedDevices(String deviceMac) {
         Set<BluetoothDevice> pairedDevice = BluetoothAdapter.getDefaultAdapter().getBondedDevices();

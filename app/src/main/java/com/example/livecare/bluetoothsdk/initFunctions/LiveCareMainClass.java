@@ -17,7 +17,6 @@ import javax.inject.Inject;
 public class LiveCareMainClass {
     private String TAG = "LiveCareMainClass";
     private Application application;
-
     private BluetoothComponent bluetoothComponent;
 
     @Inject
