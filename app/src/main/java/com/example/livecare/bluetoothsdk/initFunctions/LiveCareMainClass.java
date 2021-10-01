@@ -11,7 +11,6 @@ import com.example.livecare.bluetoothsdk.initFunctions.data.DataManager;
 import com.example.livecare.bluetoothsdk.initFunctions.di.component.DaggerLiveCareMainComponent;
 import com.example.livecare.bluetoothsdk.initFunctions.di.component.LiveCareMainComponent;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
-
 import javax.inject.Inject;
 
 public class LiveCareMainClass {
@@ -48,9 +47,9 @@ public class LiveCareMainClass {
         app.registerReceiver(bluetoothDeviceReceiver, filter);
         Utils.startTeleHealthService();
         getActivityComponent().inject(this);
-        String token = mDataManager.getAccessToken();
-        Log.d(TAG, "token: "+token);
-        mDataManager.setMessage();
+
+        //String token = mDataManager.getAccessToken();
+        //mDataManager.setMessage();
     }
 
     private final BroadcastReceiver bluetoothDeviceReceiver = new BroadcastReceiver() {
