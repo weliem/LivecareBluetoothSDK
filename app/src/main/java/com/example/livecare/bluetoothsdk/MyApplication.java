@@ -16,6 +16,9 @@ public class MyApplication extends Application {
     @Inject
     BluetoothConnection bluetoothConnection;
 
+  /*  @Inject
+    DataManager dataManager;*/
+
     public static MyApplication getInstance() {
         return instance;
     }
@@ -35,7 +38,8 @@ public class MyApplication extends Application {
                 .applicationModule(new ApplicationModule(this))
                 .build();
         getNetComponent().inject(this);
-        bluetoothConnection.setMessage();
+        //bluetoothConnection.setMessage();
+        //dataManager.saveAccessToken("erald");
     }
 
     public ApplicationComponent getNetComponent() {

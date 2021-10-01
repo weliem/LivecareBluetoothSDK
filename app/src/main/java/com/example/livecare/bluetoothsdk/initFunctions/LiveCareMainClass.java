@@ -6,11 +6,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
+import com.example.livecare.bluetoothsdk.MyApplication;
+import com.example.livecare.bluetoothsdk.initFunctions.data.DataManager;
+import com.example.livecare.bluetoothsdk.initFunctions.di.component.DaggerLiveCareMainComponent;
+import com.example.livecare.bluetoothsdk.initFunctions.di.component.LiveCareMainComponent;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
+
+import javax.inject.Inject;
 
 public class LiveCareMainClass {
     private String TAG = "LiveCareMainClass";
     private Application application;
+
+    @Inject
+    DataManager mDataManager;
+
+    private LiveCareMainComponent liveCareMainComponent;
 
     public static LiveCareMainClass getInstance() {
         return LiveCareHolder.liveCareMainClass;
@@ -20,6 +31,15 @@ public class LiveCareMainClass {
         private static final LiveCareMainClass liveCareMainClass = new LiveCareMainClass();
     }
 
+    private LiveCareMainComponent getActivityComponent() {
+        if (liveCareMainComponent == null) {
+            liveCareMainComponent = DaggerLiveCareMainComponent.builder()
+                    .applicationComponent(MyApplication.get(application).getNetComponent())
+                    .build();
+        }
+        return liveCareMainComponent;
+    }
+
     public void init(Application app) {
         Log.d(TAG, "init: ");
         application = app;
@@ -27,6 +47,10 @@ public class LiveCareMainClass {
         filter.addAction("update.ui.with.device");
         app.registerReceiver(bluetoothDeviceReceiver, filter);
         Utils.startTeleHealthService();
+        getActivityComponent().inject(this);
+        String token = mDataManager.getAccessToken();
+        Log.d(TAG, "token: "+token);
+        mDataManager.setMessage();
     }
 
     private final BroadcastReceiver bluetoothDeviceReceiver = new BroadcastReceiver() {
