@@ -8,8 +8,10 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothDataResult;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
@@ -27,9 +29,46 @@ public class MainActivity extends AppCompatActivity {
                 android.Manifest.permission.ACCESS_FINE_LOCATION
         };
         if (checkPermissions(permissions)) {
-            LiveCareMainClass.getInstance().init(getApplication());
             Log.d(TAG, "checkAndRequestForPermission: accepted");
+            initProcess();
         }
+    }
+
+    private void initProcess() {
+        LiveCareMainClass.getInstance().init(getApplication(),new BluetoothDataResult() {
+            @Override
+            public void onStartConnect() {
+                Log.d(TAG, "onStartConnect: ");
+            }
+
+            @Override
+            public void OnConnectedSuccess(String deviceName) {
+                Log.d(TAG, "OnConnectedSuccess: "+deviceName);
+            }
+
+            @Override
+            public void OnConnectFail(String message) {
+                Log.d(TAG, "OnConnectFail: "+message);
+            }
+
+            @Override
+            public void onDisConnected(String deviceName) {
+                Log.d(TAG, "onDisConnected: "+deviceName);
+            }
+
+            @Override
+            public void onDataReceived(Map<String, Object> data, String deviceName) {
+                switch (deviceName) {
+                    case "SpO2":
+                        Log.d(TAG, "onDataReceived: "+data.toString());
+                        break;
+
+                    case "BP":
+                        Log.d(TAG, "onDataReceived: ");
+                        break;
+                }
+            }
+        });
     }
 
     private boolean checkPermissions(String[] permissions) {
@@ -65,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (permissionsDenied.isEmpty()) {
             Log.d(TAG, "onRequestPermissionsResult: ");
-            LiveCareMainClass.getInstance().init(getApplication());
+            initProcess();
         } else {
             checkAndRequestForPermission();
         }

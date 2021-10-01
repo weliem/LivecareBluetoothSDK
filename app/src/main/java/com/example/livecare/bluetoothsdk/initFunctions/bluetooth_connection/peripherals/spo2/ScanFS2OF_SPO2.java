@@ -72,12 +72,12 @@ public class ScanFS2OF_SPO2 {
             double pi = Integer.parseInt(pi_result) * 0.001;
 
             if (Integer.parseInt(oxygen) < 101 && Integer.parseInt(oxygen) > 0 && Integer.parseInt(pulseRate) < 301 && Integer.parseInt(pulseRate) > 0) {
-                Map<String, Object> iHealthData = new HashMap<>();
-                iHealthData.put("oxygen", oxygen);
-                iHealthData.put("pulse", pulseRate);
-                iHealthData.put("pi", String.valueOf(pi));
+                Map<String, Object> data = new HashMap<>();
+                data.put("oxygen", oxygen);
+                data.put("pulse", pulseRate);
+                data.put("pi", String.valueOf(pi));
                 Log.d(TAG, "calculateResults on data received: "+formatHexString);
-                bluetoothConnection.onDataReceived(iHealthData, TypeBleDevices.SpO2.stringValue);
+                bluetoothConnection.onDataReceived(data, TypeBleDevices.SpO2.stringValue);
                 BleManager.getInstance().disconnect(bleDevice);
             }
         }

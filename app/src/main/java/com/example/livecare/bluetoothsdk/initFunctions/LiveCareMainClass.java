@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.util.Log;
 import com.example.livecare.bluetoothsdk.MyApplication;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothConnection;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothDataResult;
 import com.example.livecare.bluetoothsdk.initFunctions.data.DataManager;
 import com.example.livecare.bluetoothsdk.initFunctions.di.component.DaggerLiveCareMainComponent;
 import com.example.livecare.bluetoothsdk.initFunctions.di.component.LiveCareMainComponent;
@@ -18,6 +19,7 @@ public class LiveCareMainClass {
     private String TAG = "LiveCareMainClass";
     private Application application;
     private BluetoothConnection bluetoothConnection;
+    BluetoothDataResult bluetoothDataResult;
 
     @Inject
     DataManager mDataManager;
@@ -41,15 +43,17 @@ public class LiveCareMainClass {
         return liveCareMainComponent;
     }
 
-    public void init(Application app) {
+    public void init(Application app, BluetoothDataResult bluetoothDataResult) {
         Log.d(TAG, "init: ");
         application = app;
+        this.bluetoothDataResult = bluetoothDataResult;
         IntentFilter filter = new IntentFilter();
         filter.addAction("update.ui.with.device");
         app.registerReceiver(bluetoothDeviceReceiver, filter);
         Utils.startTeleHealthService();
         getActivityComponent().inject(this);
-        bluetoothConnection = new BluetoothConnection();
+        bluetoothConnection = new BluetoothConnection(this,bluetoothDataResult);
+
         //String token = mDataManager.getAccessToken();
         //mDataManager.setMessage();
     }
@@ -68,6 +72,7 @@ public class LiveCareMainClass {
 
     public void destroy(){
         Utils.stopTeleHealthService();
+        bluetoothConnection.onDestroy();
         if(application!=null){
             application.unregisterReceiver(bluetoothDeviceReceiver);
         }

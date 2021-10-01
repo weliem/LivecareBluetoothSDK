@@ -2,7 +2,8 @@ package com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection;
 
 import android.bluetooth.BluetoothGatt;
 import android.util.Log;
-import com.example.livecare.bluetoothsdk.R;
+
+import com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanFS2OF_SPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
@@ -13,30 +14,12 @@ import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.exception.BleExcep
 import java.util.Calendar;
 import java.util.Map;
 
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_AD_UA_651BLE;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BC57;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BM67;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_CVS;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_FORA;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_JUMPER;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_TRANSTEK;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BP_WELLUE;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_BP;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_INDIE_HEALTH;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_TNG_FORA;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_CARDIOBEAT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_ACCU_CHECK;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_AGAMETRIX_CVS;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_AGAMETRIX_UnPaired;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_CARESENS;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_CARESENS_S;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_CONTOUR;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_INDIE_HEALTH;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_ONE_TOUCH;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_PREMIUM_FORA;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_PREMIUM_FORA2;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_TAI_DOC;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_TRUE_METRIX;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_TRUE_METRIX_AIR_CVS;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_OMRON_BP1;
@@ -44,35 +27,13 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_OMRON_BP3;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_OMRON_BP4;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PRIZMA;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_ANDES_FIT;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_BERRYMED;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_BEURER_PO60;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FORA;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FS2OF1;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FS2OF2;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_JUMPER;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_MASIMO;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_NONIN;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_TAI_DOC;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_RING_VIATOM;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_ANDES_FIT;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_ARBOLEAF;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_FORA;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_INDIE_HEALTH;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_INDIE_HEALTH_SMALL;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_JUMPER;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SPIROMETER_ANDES_FIT;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMPERATURE_SENSOR_GOVEE;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_AET_WD;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_ANDES_FIT;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_JUMPER;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_JUMPER1;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_FORA_IR20;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_UNAAN;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_VIATOM;
 
 public class BluetoothConnection {
     private String TAG = "BluetoothConnection";
+    private LiveCareMainClass liveCareMainClass;
     private int failFlagCount = 0;
   /*  private LiveCareBP liveCareBP;
     private TranstekBP transtekBP;
@@ -99,6 +60,12 @@ public class BluetoothConnection {
     private JumperScale jumperScale;
     private ForaSpO2 foraSpO2;*/
     private ScanFS2OF_SPO2 scanFS2OF_spo2;
+    private BluetoothDataResult bluetoothDataResult;
+
+    public BluetoothConnection(LiveCareMainClass liveCareMainClass, BluetoothDataResult bluetoothDataResult) {
+        this.liveCareMainClass = liveCareMainClass;
+        this.bluetoothDataResult = bluetoothDataResult;
+    }
 
     public void addDeviceFromScanning(BleDevice bleDevice, String devicesOrigin, String deviceName) {
         Utils.teleHealthScanBroadcastReceiver(false);
@@ -114,6 +81,7 @@ public class BluetoothConnection {
             @Override
             public void onStartConnect() {
                 Log.d(TAG, "connect onStartConnect: ");
+                bluetoothDataResult.onStartConnect();
             }
 
             @Override
@@ -128,21 +96,21 @@ public class BluetoothConnection {
                     }
 
                     if (failFlagCount > 2) {
-                        connectionFailed(deviceName);
+                        connectionFailed(deviceName,exception.getDescription());
                     }
 
                     if (exception.getDescription().contains("Gatt Exception Occurred")) {
-                        connectionFailed(deviceName);
+                        connectionFailed(deviceName, exception.getDescription());
                     }
                 } else {
-                    connectionFailed(deviceName);
+                    connectionFailed(deviceName, exception.getDescription());
                 }
             }
 
             @Override
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
                 Log.d(TAG, "connect onConnectSuccess: ");
-
+                bluetoothDataResult.OnConnectedSuccess(deviceName);
                 if (gatt != null) {
                     onConnectedSuccess(bleDevice, gatt, deviceName);
                 } else {
@@ -154,6 +122,7 @@ public class BluetoothConnection {
             @Override
             public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status, int disconnectFlag) {
                 Log.d(TAG, "connect onDisConnected: isActiveDisConnected " + isActiveDisConnected + " bleDevice " + bleDevice.getName() + " status " + status + " disconnectFlag "+disconnectFlag);
+                bluetoothDataResult.onDisConnected(deviceName);
                 sendDataOnDisconnect(bleDevice);
                 Utils.setTimeOnDisconnect(bleDevice.getName());
                 Constants.currentTimeForLastTelehealthService = Calendar.getInstance().getTime().getTime();
@@ -181,7 +150,8 @@ public class BluetoothConnection {
         }
     }
 
-    private void connectionFailed(String deviceName){
+    private void connectionFailed(String deviceName, String message){
+        bluetoothDataResult.OnConnectFail(message);
         Utils.teleHealthScanBroadcastReceiver(true);
     }
 
@@ -449,7 +419,13 @@ public class BluetoothConnection {
         }
     }
 
-    public void onDataReceived(Map<String, Object> iHealthData, String stringValue) {
+    public void onDataReceived(Map<String, Object> data, String deviceName) {
+        if(liveCareMainClass != null){
+            bluetoothDataResult.onDataReceived(data, deviceName);
+        }
+    }
 
+    public void onDestroy() {
+        liveCareMainClass = null;
     }
 }
