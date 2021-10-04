@@ -55,8 +55,7 @@ public class PO60SPO2 {
         } else {
             if (Utils.isNotOtherBleDeviceConnected()) {
                 Log.d(TAG, "onConnectedSuccess: enter pin");
-                Utils.pair(bleDevice.getDevice());
-                //bluetoothConnection.setPin(bleDevice.getDevice(), 2);
+                bluetoothConnection.setPin(bleDevice.getDevice(), 2);
             } else {
                 Utils.teleHealthScanBroadcastReceiver(true);
                 BleManager.getInstance().disconnect(bleDevice);

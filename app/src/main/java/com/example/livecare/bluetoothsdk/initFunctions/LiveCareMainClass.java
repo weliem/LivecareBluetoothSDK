@@ -30,7 +30,7 @@ public class LiveCareMainClass {
         filter.addAction("update.ui.with.device");
         app.registerReceiver(bluetoothDeviceReceiver, filter);
         Utils.startTeleHealthService();
-        bluetoothConnection = new BluetoothConnection(this,bluetoothDataResult);
+        bluetoothConnection = new BluetoothConnection(this,bluetoothDataResult,app);
     }
 
     private final BroadcastReceiver bluetoothDeviceReceiver = new BroadcastReceiver() {

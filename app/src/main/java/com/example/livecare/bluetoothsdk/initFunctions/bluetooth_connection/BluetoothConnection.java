@@ -1,12 +1,19 @@
 package com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection;
 
+import android.app.Application;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.util.Log;
-
 import com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.BC57BP;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.BM67BP;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.BPAndesFit;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.CareSensGlucometer;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.CareSense_S_Glucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.ScaleAndesFit;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spirometer.SpirometerAndesFit;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.PO60SPO2;
@@ -22,6 +29,7 @@ import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.exception.BleExcep
 import java.util.Calendar;
 import java.util.Map;
 
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_AD_UA_651BLE;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BC57;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BM67;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_ANDES_FIT;
@@ -30,6 +38,8 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_AGAMETRIX_CVS;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_AGAMETRIX_UnPaired;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_CARESENS;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_CARESENS_S;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_CONTOUR;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_ONE_TOUCH;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_TRUE_METRIX;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_TRUE_METRIX_AIR_CVS;
@@ -42,13 +52,19 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_BEURER_PO60;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FS2OF1;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FS2OF2;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_NONIN;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_RING_VIATOM;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SPIROMETER_ANDES_FIT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMPERATURE_SENSOR_GOVEE;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_ANDES_FIT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_JUMPER;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_JUMPER1;
 
 public class BluetoothConnection {
     private String TAG = "BluetoothConnection";
     private LiveCareMainClass liveCareMainClass;
+    private Application app;
     private int failFlagCount = 0;
   /*  private LiveCareBP liveCareBP;
     private TranstekBP transtekBP;
@@ -62,7 +78,7 @@ public class BluetoothConnection {
     private ECGCardiBeat ecgCardiBeat;
     private VivaLNKTemperature vivaLNKTemperature;
     private VivaLNKECGBackground vivaLNKECGBackground;
-    private CareSensGlucometer careSensGlucometer;
+
 
 
     private AccuCheckGlucometer accuCheckGlucometer;
@@ -77,10 +93,12 @@ public class BluetoothConnection {
     private BM67BP bm67BP;
     private BC57BP bc57BP;
     private PO60SPO2 po60SPO2;
+    private CareSensGlucometer careSensGlucometer;
 
     private BluetoothDataResult bluetoothDataResult;
 
-    public BluetoothConnection(LiveCareMainClass liveCareMainClass, BluetoothDataResult bluetoothDataResult) {
+    public BluetoothConnection(LiveCareMainClass liveCareMainClass, BluetoothDataResult bluetoothDataResult, Application app) {
+        this.app = app;
         this.liveCareMainClass = liveCareMainClass;
         this.bluetoothDataResult = bluetoothDataResult;
     }
@@ -364,21 +382,21 @@ public class BluetoothConnection {
                     jumperScale = new JumperScale(bluetoothConnectionFragment, mContext, deviceName);
                     jumperScale.onConnectedSuccess(device, gatt);
                     break;
-
+*/
                 default:
                     if (device.getName().contains(BLE_OMRON_BP1) || device.getName().contains(BLE_OMRON_BP2) ||
                             device.getName().contains(BLE_OMRON_BP3) || device.getName().contains(BLE_OMRON_BP4)) {
-                        omronBP = new OmronBP(bluetoothConnectionFragment, mContext, deviceName);
-                        omronBP.onConnectedSuccess(device, gatt);
+                        //omronBP = new OmronBP(bluetoothConnectionFragment, mContext, deviceName);
+                       // omronBP.onConnectedSuccess(device, gatt);
                     } else if(device.getName().startsWith(BLE_GLUCOMETER_CARESENS_S)){
                         if(device.getName().contains(BLE_GLUCOMETER_CARESENS)){
-                            careSensGlucometer = new CareSensGlucometer(bluetoothConnectionFragment, mContext, deviceName);
+                            careSensGlucometer = new CareSensGlucometer(this);
                             careSensGlucometer.onConnectedSuccess(device, gatt);
                         }else {
-                            CareSense_S_Glucometer careSense_s_glucometer = new CareSense_S_Glucometer(bluetoothConnectionFragment, mContext, deviceName);
+                            CareSense_S_Glucometer careSense_s_glucometer = new CareSense_S_Glucometer(this);
                             careSense_s_glucometer.onConnectedSuccess(device, gatt);
                         }
-                    }else if (device.getName().contains(BLE_GLUCOMETER_CONTOUR)) {
+                    }/*else if (device.getName().contains(BLE_GLUCOMETER_CONTOUR)) {
                         ContourGlucometer contourGlucometer = new ContourGlucometer(bluetoothConnectionFragment, mContext, deviceName);
                         contourGlucometer.onConnectedSuccess(device, gatt);
                     } else if (device.getName().contains(BLE_PRIZMA)) {
@@ -508,6 +526,60 @@ public class BluetoothConnection {
         }*/
         if (spirometerAndesFit != null) {
             spirometerAndesFit.onDestroy();
+        }
+    }
+
+    int pinDevice = 0;
+    public void setPin(BluetoothDevice device, int deviceFlag) {
+        pinDevice = deviceFlag;
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        app.registerReceiver(mReceiver, filter);
+        Utils.pair(device);
+    }
+
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
+
+                switch(state){
+                    case BluetoothDevice.BOND_BONDING:
+                        // Bonding...
+                        Log.d(TAG, "onReceive: Bonding");
+                        break;
+
+                    case BluetoothDevice.BOND_BONDED:
+                        // Bonded...
+                        Log.d(TAG, "onReceive: Bonded");
+                        app.unregisterReceiver(mReceiver);
+                        connectAfterPinSet(pinDevice);
+                        break;
+
+                    case BluetoothDevice.BOND_NONE:
+                        Log.d(TAG, "onReceive: BOND_NONE");
+                        // Not bonded...
+                        break;
+                }
+            }
+        }
+    };
+
+    public void connectAfterPinSet(int deviceFlag) {
+        if (deviceFlag == 1) {
+            careSensGlucometer.startNotifyCustom();
+        } else if (deviceFlag == 2) {
+            po60SPO2.startNotifyCustom();
+        } else if (deviceFlag == 3) {
+            //accuCheckGlucometer.startNotifyCustom();
+        } else if (deviceFlag == 5) {
+           // trueMetrixAirGlucometer.startNotifyCustom();
+        } else if (deviceFlag == 6) {
+           // agaMetrixGlucometer.startNotifyCustom();
+        } else if (deviceFlag == 7) {
+           // oneTouchGlucometer.startNotifyCustom();
         }
     }
 }
