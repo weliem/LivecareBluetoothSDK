@@ -3,7 +3,7 @@ package com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection;
 import java.util.Map;
 
 public interface BluetoothDataResult {
-    void onStartConnect();
+    void onStartConnect(String deviceName);
     
     void OnConnectedSuccess(String deviceName);
 

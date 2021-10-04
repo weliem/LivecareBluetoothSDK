@@ -20,12 +20,10 @@ public class ScanFS2OF_SPO2 {
     private final String TAG = "ScanFS2OF_SPO2";
     private final BluetoothConnection bluetoothConnection;
     private BleDevice bleDevice;
-    private final String deviceName;
     private long lastTime = 0;
 
-    public ScanFS2OF_SPO2(BluetoothConnection bluetoothConnection, String deviceName) {
+    public ScanFS2OF_SPO2(BluetoothConnection bluetoothConnection) {
         this.bluetoothConnection = bluetoothConnection;
-        this.deviceName = deviceName;
     }
 
     public void onConnectedSuccess(BleDevice device, BluetoothGatt gatt) {

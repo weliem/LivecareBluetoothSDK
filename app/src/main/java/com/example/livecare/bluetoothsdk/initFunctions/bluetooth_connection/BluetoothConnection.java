@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGatt;
 import android.util.Log;
 
 import com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.BPAndesFit;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanFS2OF_SPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
@@ -14,6 +15,7 @@ import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.exception.BleExcep
 import java.util.Calendar;
 import java.util.Map;
 
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_BP;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_ACCU_CHECK;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_AGAMETRIX_CVS;
@@ -39,7 +41,7 @@ public class BluetoothConnection {
     private TranstekBP transtekBP;
     private ScanSPO2 scanSPO2;
     private ScanSPO2AndesFit scanSPO2AndesFit;
-    private BPAndesFit bpAndesFit;
+
     private AD_BP_UA_651BLE ad_bp_ua_651BLE;
     private IndieGlucometer indieGlucometer;
     private IndieScale indieScale;
@@ -59,6 +61,7 @@ public class BluetoothConnection {
     private SpirometerAndesFit spirometerAndesFit;
     private JumperScale jumperScale;
     private ForaSpO2 foraSpO2;*/
+    private BPAndesFit bpAndesFit;
     private ScanFS2OF_SPO2 scanFS2OF_spo2;
     private BluetoothDataResult bluetoothDataResult;
 
@@ -81,7 +84,7 @@ public class BluetoothConnection {
             @Override
             public void onStartConnect() {
                 Log.d(TAG, "connect onStartConnect: ");
-                bluetoothDataResult.onStartConnect();
+                bluetoothDataResult.onStartConnect(deviceName);
             }
 
             @Override
@@ -165,8 +168,13 @@ public class BluetoothConnection {
 
                 case BLE_PULSE_OXIMETER_FS2OF1:
                 case BLE_PULSE_OXIMETER_FS2OF2:
-                    scanFS2OF_spo2 = new ScanFS2OF_SPO2(this, deviceName);
+                    scanFS2OF_spo2 = new ScanFS2OF_SPO2(this);
                     scanFS2OF_spo2.onConnectedSuccess(device, gatt);
+                    break;
+
+                case BLE_BlOOD_PRESSURE_ANDES_FIT:
+                    bpAndesFit = new BPAndesFit(this);
+                    bpAndesFit.onConnectedSuccess(device, gatt);
                     break;
 /*
                 case BLE_SCALE_ANDES_FIT:
@@ -182,11 +190,6 @@ public class BluetoothConnection {
                 case BLE_PULSE_OXIMETER_ANDES_FIT:
                     scanSPO2AndesFit = new ScanSPO2AndesFit(bluetoothConnectionFragment, mContext, deviceName);
                     scanSPO2AndesFit.onConnectedSuccess(device, gatt);
-                    break;
-
-                case BLE_BlOOD_PRESSURE_ANDES_FIT:
-                    bpAndesFit = new BPAndesFit(bluetoothConnectionFragment, mContext, deviceName);
-                    bpAndesFit.onConnectedSuccess(device, gatt);
                     break;
 
                 case BLE_TEMP_AET_WD:
@@ -427,5 +430,63 @@ public class BluetoothConnection {
 
     public void onDestroy() {
         liveCareMainClass = null;
+
+     /*   if (handler != null && runnable != null) {
+            handler.removeCallbacks(runnable);
+        }
+        if (liveCareBP != null) {
+            liveCareBP.onDestroy();
+        }
+        if (scanSPO2 != null) {
+            scanSPO2.onDestroy();
+        }
+        if (scanSPO2AndesFit != null) {
+            scanSPO2AndesFit.onDestroy();
+        }*/
+        if (bpAndesFit != null) {
+            bpAndesFit.onDestroy();
+        }
+        /*if (ad_bp_ua_651BLE != null) {
+            ad_bp_ua_651BLE.onDestroy();
+        }
+        if (indieGlucometer != null) {
+            indieGlucometer.onDestroy();
+        }
+
+        if (indieScale != null) {
+            indieScale.onDestroy();
+        }
+
+        if (omronBP != null) {
+            omronBP.onDestroy();
+        }
+
+        if (po60SPO2 != null) {
+            po60SPO2.onDestroy();
+        }
+
+        if (vivaLNKTemperature != null) {
+            vivaLNKTemperature.onDestroy();
+        }
+
+        if (vivaLNKECGBackground != null) {
+            vivaLNKECGBackground.onDestroy();
+        }
+
+        if (ecgCardiBeat != null) {
+            ecgCardiBeat.onDestroy();
+        }
+
+        if (spirometerAndesFit != null) {
+            spirometerAndesFit.onDestroy();
+        }
+
+        if (jumperScale != null) {
+            jumperScale.onDestroy();
+        }
+
+        if (foraSpO2 != null) {
+            foraSpO2.destroyContext();
+        }*/
     }
 }

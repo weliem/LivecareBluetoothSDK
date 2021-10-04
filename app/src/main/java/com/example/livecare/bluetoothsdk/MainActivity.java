@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private void initProcess() {
         LiveCareMainClass.getInstance().init(getApplication(),new BluetoothDataResult() {
             @Override
-            public void onStartConnect() {
-                Log.d(TAG, "onStartConnect: ");
+            public void onStartConnect(String deviceName) {
+                Log.d(TAG, "onStartConnect: "+deviceName);
             }
 
             @Override
@@ -60,11 +60,34 @@ public class MainActivity extends AppCompatActivity {
             public void onDataReceived(Map<String, Object> data, String deviceName) {
                 switch (deviceName) {
                     case "SpO2":
-                        Log.d(TAG, "onDataReceived: "+data.toString());
+                        Log.d(TAG, "onDataReceived SpO2: "+data.toString());
                         break;
-
                     case "BP":
-                        Log.d(TAG, "onDataReceived: ");
+                        Log.d(TAG, "onDataReceived BP: "+data.toString());
+                        break;
+                    case "Gl":
+                        Log.d(TAG, "onDataReceived Gl: "+data.toString());
+                        break;
+                    case "Temp":
+                        Log.d(TAG, "onDataReceived Temp: "+data.toString());
+                        break;
+                    case "WS":
+                        Log.d(TAG, "onDataReceived WS: "+data.toString());
+                        break;
+                    case "ECG":
+                        Log.d(TAG, "onDataReceived ECG: "+data.toString());
+                        break;
+                    case "PRIZMA":
+                        Log.d(TAG, "onDataReceived PRIZMA: "+data.toString());
+                        break;
+                    case "V_ALERT":
+                        Log.d(TAG, "onDataReceived V_ALERT: "+data.toString());
+                        break;
+                    case "Fitness":
+                        Log.d(TAG, "onDataReceived Fitness: "+data.toString());
+                        break;
+                    case "Spirometer":
+                        Log.d(TAG, "onDataReceived Spirometer: "+data.toString());
                         break;
                 }
             }

@@ -130,12 +130,10 @@ public class Utils {
     }
 
     public static void teleHealthScanBroadcastReceiver(boolean startScan) {
-        if(!startScan){
-            Intent local = new Intent();
-            local.setAction("teleHealthScan.BroadcastReceiver");
-            local.putExtra("startScan", startScan);
-            MyApplication.getInstance().sendBroadcast(local);
-        }
+        Intent local = new Intent();
+        local.setAction("teleHealthScan.BroadcastReceiver");
+        local.putExtra("startScan", startScan);
+        MyApplication.getInstance().sendBroadcast(local);
     }
 
     public static void setTimeOnDisconnect(String deviceName) {
