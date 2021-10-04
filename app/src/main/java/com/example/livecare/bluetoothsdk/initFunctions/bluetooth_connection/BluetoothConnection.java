@@ -5,7 +5,11 @@ import android.util.Log;
 
 import com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.BPAndesFit;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.ScaleAndesFit;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spirometer.SpirometerAndesFit;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanFS2OF_SPO2;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanSPO2AndesFit;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerAndesFit;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
@@ -29,9 +33,13 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_OMRON_BP3;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_OMRON_BP4;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PRIZMA;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_BEURER_PO60;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FS2OF1;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FS2OF2;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_ANDES_FIT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SPIROMETER_ANDES_FIT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_ANDES_FIT;
 
 public class BluetoothConnection {
     private String TAG = "BluetoothConnection";
@@ -40,7 +48,6 @@ public class BluetoothConnection {
   /*  private LiveCareBP liveCareBP;
     private TranstekBP transtekBP;
     private ScanSPO2 scanSPO2;
-    private ScanSPO2AndesFit scanSPO2AndesFit;
 
     private AD_BP_UA_651BLE ad_bp_ua_651BLE;
     private IndieGlucometer indieGlucometer;
@@ -58,11 +65,12 @@ public class BluetoothConnection {
     private TrueMetrixAirGlucometer trueMetrixAirGlucometer;
     private AgaMetrixGlucometer agaMetrixGlucometer;
     private OneTouchGlucometer oneTouchGlucometer;
-    private SpirometerAndesFit spirometerAndesFit;
+
     private JumperScale jumperScale;
     private ForaSpO2 foraSpO2;*/
     private BPAndesFit bpAndesFit;
-    private ScanFS2OF_SPO2 scanFS2OF_spo2;
+    private SpirometerAndesFit spirometerAndesFit;
+
     private BluetoothDataResult bluetoothDataResult;
 
     public BluetoothConnection(LiveCareMainClass liveCareMainClass, BluetoothDataResult bluetoothDataResult) {
@@ -115,7 +123,7 @@ public class BluetoothConnection {
                 Log.d(TAG, "connect onConnectSuccess: ");
                 bluetoothDataResult.OnConnectedSuccess(deviceName);
                 if (gatt != null) {
-                    onConnectedSuccess(bleDevice, gatt, deviceName);
+                    onConnectedSuccess(bleDevice, gatt);
                 } else {
                     BleManager.getInstance().disconnect(bleDevice);
                 }
@@ -133,7 +141,7 @@ public class BluetoothConnection {
         });
     }
 
-    public void startScanAgain(BleDevice bleDevice) {
+    private void startScanAgain(BleDevice bleDevice) {
         if (bleDevice.getName() != null) {
             if (!(bleDevice.getName().contains(BLE_GLUCOMETER_CARESENS)
                     || bleDevice.getName().contains(BLE_GLUCOMETER_AGAMETRIX_CVS)
@@ -154,11 +162,11 @@ public class BluetoothConnection {
     }
 
     private void connectionFailed(String deviceName, String message){
-        bluetoothDataResult.OnConnectFail(message);
+        bluetoothDataResult.OnConnectFail(deviceName, message);
         Utils.teleHealthScanBroadcastReceiver(true);
     }
 
-    private void onConnectedSuccess(BleDevice device, BluetoothGatt gatt, String deviceName) {
+    private void onConnectedSuccess(BleDevice device, BluetoothGatt gatt) {
         if (device.getName() != null) {
             switch (device.getName()) {
                 /*case BLE_PULSE_OXIMETER_BERRYMED:
@@ -168,7 +176,7 @@ public class BluetoothConnection {
 
                 case BLE_PULSE_OXIMETER_FS2OF1:
                 case BLE_PULSE_OXIMETER_FS2OF2:
-                    scanFS2OF_spo2 = new ScanFS2OF_SPO2(this);
+                    ScanFS2OF_SPO2 scanFS2OF_spo2 = new ScanFS2OF_SPO2(this);
                     scanFS2OF_spo2.onConnectedSuccess(device, gatt);
                     break;
 
@@ -176,23 +184,28 @@ public class BluetoothConnection {
                     bpAndesFit = new BPAndesFit(this);
                     bpAndesFit.onConnectedSuccess(device, gatt);
                     break;
-/*
+
                 case BLE_SCALE_ANDES_FIT:
-                    ScaleAndesFit scaleAndesFit = new ScaleAndesFit(bluetoothConnectionFragment, mContext, deviceName);
+                    ScaleAndesFit scaleAndesFit = new ScaleAndesFit(this);
                     scaleAndesFit.onConnectedSuccess(device, gatt);
                     break;
 
                 case BLE_TEMP_ANDES_FIT:
-                    ThermometerAndesFit thermometerAndesFit = new ThermometerAndesFit(bluetoothConnectionFragment, mContext, deviceName);
+                    ThermometerAndesFit thermometerAndesFit = new ThermometerAndesFit(this);
                     thermometerAndesFit.onConnectedSuccess(device, gatt);
                     break;
 
                 case BLE_PULSE_OXIMETER_ANDES_FIT:
-                    scanSPO2AndesFit = new ScanSPO2AndesFit(bluetoothConnectionFragment, mContext, deviceName);
+                    ScanSPO2AndesFit scanSPO2AndesFit = new ScanSPO2AndesFit(this);
                     scanSPO2AndesFit.onConnectedSuccess(device, gatt);
                     break;
 
-                case BLE_TEMP_AET_WD:
+                case BLE_SPIROMETER_ANDES_FIT:
+                    spirometerAndesFit = new SpirometerAndesFit(this);
+                    spirometerAndesFit.onConnectedSuccess(device, gatt);
+                    break;
+
+               /* case BLE_TEMP_AET_WD:
                     ThermometerAET thermometerAET = new ThermometerAET(bluetoothConnectionFragment, mContext, deviceName);
                     thermometerAET.onConnectedSuccess(device, gatt);
                     break;
@@ -334,10 +347,7 @@ public class BluetoothConnection {
                     jumperBP.onConnectedSuccess(device, gatt);
                     break;
 
-                case BLE_SPIROMETER_ANDES_FIT:
-                    spirometerAndesFit = new SpirometerAndesFit(bluetoothConnectionFragment, mContext, deviceName);
-                    spirometerAndesFit.onConnectedSuccess(device, gatt);
-                    break;
+
 
                 case BLE_SCALE_JUMPER:
                     jumperScale = new JumperScale(bluetoothConnectionFragment, mContext, deviceName);
@@ -417,9 +427,9 @@ public class BluetoothConnection {
             ecgCardiBeat.onDisConnected();
         }*/
 
-        if (bleDevice.getName().startsWith(BLE_PRIZMA)) {
+        /*if (bleDevice.getName().startsWith(BLE_PRIZMA)) {
            // bluetoothConnectionFragment.forceFinishActivity();
-        }
+        }*/
     }
 
     public void onDataReceived(Map<String, Object> data, String deviceName) {
@@ -439,10 +449,7 @@ public class BluetoothConnection {
         }
         if (scanSPO2 != null) {
             scanSPO2.onDestroy();
-        }
-        if (scanSPO2AndesFit != null) {
-            scanSPO2AndesFit.onDestroy();
-        }*/
+        }}*/
         if (bpAndesFit != null) {
             bpAndesFit.onDestroy();
         }
@@ -477,9 +484,7 @@ public class BluetoothConnection {
             ecgCardiBeat.onDestroy();
         }
 
-        if (spirometerAndesFit != null) {
-            spirometerAndesFit.onDestroy();
-        }
+
 
         if (jumperScale != null) {
             jumperScale.onDestroy();
@@ -488,5 +493,8 @@ public class BluetoothConnection {
         if (foraSpO2 != null) {
             foraSpO2.destroyContext();
         }*/
+        if (spirometerAndesFit != null) {
+            spirometerAndesFit.onDestroy();
+        }
     }
 }

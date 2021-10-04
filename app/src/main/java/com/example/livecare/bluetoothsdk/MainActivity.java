@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void OnConnectFail(String message) {
-                Log.d(TAG, "OnConnectFail: "+message);
+            public void OnConnectFail(String deviceName, String message) {
+                Log.d(TAG, "OnConnectFail: "+message + " deviceName" +deviceName);
             }
 
             @Override

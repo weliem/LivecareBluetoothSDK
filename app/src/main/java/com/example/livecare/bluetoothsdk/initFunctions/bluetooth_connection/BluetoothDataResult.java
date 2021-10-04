@@ -7,7 +7,7 @@ public interface BluetoothDataResult {
     
     void OnConnectedSuccess(String deviceName);
 
-    void OnConnectFail(String message);
+    void OnConnectFail(String deviceName, String message);
 
     void onDisConnected(String deviceName);
 
