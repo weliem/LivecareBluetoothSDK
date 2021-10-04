@@ -152,12 +152,13 @@ public class TeleHealthScanBackgroundPresenter {
 
                 @Override
                 public void onScanning(BleDevice bleDevice) {
-                    Log.d(TAG, "onScanning: " + bleDevice.getName() + " mac " + bleDevice.getMac() + " start time " + startTime);
+                    //Log.d(TAG, "onScanning: " + bleDevice.getName() + " mac " + bleDevice.getMac() + " start time " + startTime);
                     scanDevicesResponse(bleDevice);
                 }
 
                 @Override
                 public void onScanFinished(List<BleDevice> scanResultList) {
+                    Log.d(TAG, "onScanFinished: ");
                     if (scanResultList.isEmpty() && teleHealthService != null && !isAnyDeviceConnected()) {
                         teleHealthService.resetBluetooth();
                     } else {
