@@ -384,7 +384,7 @@ public class TeleHealthScanBackgroundPresenter {
                             decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices);
                         }
                     } else if (device.getName().contains(BLE_TEMPERATURE_SENSOR_GOVEE)) {
-                        decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices);
+                        // TODO: 10/4/2021 // decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices);
                     } else if (device.getName().contains(BLE_V_ALERT)) {
                         if (!BleManager.getInstance().isConnected(device) && teleHealthService != null) {
                             BleManager.getInstance().cancelScan();

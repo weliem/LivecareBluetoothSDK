@@ -4,9 +4,12 @@ import android.bluetooth.BluetoothGatt;
 import android.util.Log;
 
 import com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.BC57BP;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.BM67BP;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.BPAndesFit;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.ScaleAndesFit;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spirometer.SpirometerAndesFit;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.PO60SPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanFS2OF_SPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanSPO2AndesFit;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerAndesFit;
@@ -19,6 +22,8 @@ import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.exception.BleExcep
 import java.util.Calendar;
 import java.util.Map;
 
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BC57;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BM67;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_BP;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_ACCU_CHECK;
@@ -58,9 +63,8 @@ public class BluetoothConnection {
     private VivaLNKTemperature vivaLNKTemperature;
     private VivaLNKECGBackground vivaLNKECGBackground;
     private CareSensGlucometer careSensGlucometer;
-    private BM67BP bm67BP;
-    private BC57BP bc57BP;
-    private PO60SPO2 po60SPO2;
+
+
     private AccuCheckGlucometer accuCheckGlucometer;
     private TrueMetrixAirGlucometer trueMetrixAirGlucometer;
     private AgaMetrixGlucometer agaMetrixGlucometer;
@@ -70,6 +74,9 @@ public class BluetoothConnection {
     private ForaSpO2 foraSpO2;*/
     private BPAndesFit bpAndesFit;
     private SpirometerAndesFit spirometerAndesFit;
+    private BM67BP bm67BP;
+    private BC57BP bc57BP;
+    private PO60SPO2 po60SPO2;
 
     private BluetoothDataResult bluetoothDataResult;
 
@@ -205,6 +212,21 @@ public class BluetoothConnection {
                     spirometerAndesFit.onConnectedSuccess(device, gatt);
                     break;
 
+                case BLE_PULSE_OXIMETER_BEURER_PO60:
+                    po60SPO2 = new PO60SPO2(this);
+                    po60SPO2.onConnectedSuccess(device, gatt);
+                    break;
+
+                case BLE_BLOOD_PRESSURE_BEURER_BM67:
+                    bm67BP = new BM67BP(this);
+                    bm67BP.onConnectedSuccess(device, gatt);
+                    break;
+
+                case BLE_BLOOD_PRESSURE_BEURER_BC57:
+                    bc57BP = new BC57BP(this);
+                    bc57BP.onConnectedSuccess(device, gatt);
+                    break;
+
                /* case BLE_TEMP_AET_WD:
                     ThermometerAET thermometerAET = new ThermometerAET(bluetoothConnectionFragment, mContext, deviceName);
                     thermometerAET.onConnectedSuccess(device, gatt);
@@ -306,25 +328,14 @@ public class BluetoothConnection {
                     wellueBP.onConnectedSuccess(device, gatt);
                     break;
 
-                case BLE_BLOOD_PRESSURE_BEURER_BM67:
-                    bm67BP = new BM67BP(bluetoothConnectionFragment, mContext, deviceName);
-                    bm67BP.onConnectedSuccess(device, gatt);
-                    break;
 
-                case BLE_BLOOD_PRESSURE_BEURER_BC57:
-                    bc57BP = new BC57BP(bluetoothConnectionFragment, mContext, deviceName);
-                    bc57BP.onConnectedSuccess(device, gatt);
-                    break;
 
                 case BLE_BLOOD_PRESSURE_CVS:
                     BP3MW1 bp3MW1 = new BP3MW1(bluetoothConnectionFragment, mContext, deviceName);
                     bp3MW1.onConnectedSuccess(device, gatt);
                     break;
 
-                case BLE_PULSE_OXIMETER_BEURER_PO60:
-                    po60SPO2 = new PO60SPO2(bluetoothConnectionFragment, mContext, deviceName);
-                    po60SPO2.onConnectedSuccess(device, gatt);
-                    break;
+
 
                 case BLE_GLUCOMETER_TRUE_METRIX_AIR_CVS:
                 case BLE_GLUCOMETER_TRUE_METRIX:
@@ -407,10 +418,6 @@ public class BluetoothConnection {
         if (bleDevice.getName() == null) {
             return;
         }
-      /*  if (bleDevice.getName().equalsIgnoreCase(BLE_BlOOD_PRESSURE_INDIE_HEALTH) && indieBP != null) {
-            indieBP.onDisConnected();
-        }
-
         if (bleDevice.getName().equalsIgnoreCase(BLE_BLOOD_PRESSURE_BEURER_BM67) && bm67BP != null) {
             bm67BP.onDisConnected();
         }
@@ -418,6 +425,11 @@ public class BluetoothConnection {
         if (bleDevice.getName().equalsIgnoreCase(BLE_BLOOD_PRESSURE_BEURER_BC57) && bc57BP != null) {
             bc57BP.onDisConnected();
         }
+      /*  if (bleDevice.getName().equalsIgnoreCase(BLE_BlOOD_PRESSURE_INDIE_HEALTH) && indieBP != null) {
+            indieBP.onDisConnected();
+        }
+
+
 
         if (bleDevice.getName().equalsIgnoreCase(BLE_BLOOD_PRESSURE_TRANSTEK) && transtekBP != null) {
             transtekBP.onDisConnected();
@@ -453,6 +465,9 @@ public class BluetoothConnection {
         if (bpAndesFit != null) {
             bpAndesFit.onDestroy();
         }
+        if (po60SPO2 != null) {
+            po60SPO2.onDestroy();
+        }
         /*if (ad_bp_ua_651BLE != null) {
             ad_bp_ua_651BLE.onDestroy();
         }
@@ -468,9 +483,7 @@ public class BluetoothConnection {
             omronBP.onDestroy();
         }
 
-        if (po60SPO2 != null) {
-            po60SPO2.onDestroy();
-        }
+
 
         if (vivaLNKTemperature != null) {
             vivaLNKTemperature.onDestroy();

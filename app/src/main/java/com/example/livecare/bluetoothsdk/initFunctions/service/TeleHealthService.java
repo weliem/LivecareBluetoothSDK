@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.util.Log;
 import androidx.annotation.Nullable;
@@ -29,7 +30,7 @@ public class TeleHealthService extends Service {
     private BleDevice bleDevice;
     private int flag;
     private PowerManager.WakeLock wl;
-    Handler handlerToStartBluetoothActivity = new Handler();
+    Handler handlerToStartBluetoothActivity = new Handler(Looper.getMainLooper());
     Runnable runnableToStartBluetoothActivity;
     //private IHealthConnection iHealthConnection;
 
@@ -88,7 +89,7 @@ public class TeleHealthService extends Service {
     }
 
     private void isBlueEnable() {
-        Handler handler = new Handler();
+        Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

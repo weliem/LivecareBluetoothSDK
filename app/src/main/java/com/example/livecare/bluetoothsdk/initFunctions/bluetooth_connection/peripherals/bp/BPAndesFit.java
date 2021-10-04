@@ -96,7 +96,7 @@ public class BPAndesFit {
     }
 
     private void checkIfDeviceIsOn() {
-        handler = new Handler();
+        handler = new Handler(Looper.getMainLooper());
         runnable = new Runnable() {
             @Override
             public void run() {

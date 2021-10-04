@@ -114,6 +114,14 @@ public class Utils {
         return false;
     }
 
+    public static boolean isNotOtherBleDeviceConnected() {
+        return BleManager.getInstance().getBluetoothManager().getConnectedDevices(GATT).size() == 1 && !Constants.ViatomScaleConnected;
+    }
+
+    public static void pair(BluetoothDevice device) {
+        device.createBond();
+    }
+
     public static boolean createBond(BluetoothDevice btDevice)
             throws Exception {
         Class class1 = Class.forName("android.bluetooth.BluetoothDevice");
