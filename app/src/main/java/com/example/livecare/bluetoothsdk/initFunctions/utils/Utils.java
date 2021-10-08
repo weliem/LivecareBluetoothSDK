@@ -14,6 +14,7 @@ import com.example.livecare.bluetoothsdk.initFunctions.service.TeleHealthService
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
 import java.lang.reflect.Method;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Set;
 import static android.bluetooth.BluetoothProfile.GATT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BC57;
@@ -247,5 +248,17 @@ public class Utils {
             returnedValue = "0" + returnedValue;
         }
         return returnedValue;
+    }
+
+    public static String setDateTimeCommand() {
+        Date date = new Date(); // your date
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+
+        String sendHour = Integer.toHexString(cal.get(Calendar.HOUR_OF_DAY));
+        String sendMin = Integer.toHexString(cal.get(Calendar.MINUTE));
+
+        String setTimeDate = "5133" + convertIntToHex(cal) + addZeroToHex(sendMin) + addZeroToHex(sendHour) + "a3";
+        return checkSum(setTimeDate);
     }
 }

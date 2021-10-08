@@ -15,8 +15,6 @@ import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.data.BleDevice;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.exception.BleException;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.utils.HexUtil;
 import java.math.BigInteger;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,7 +68,7 @@ public class ForaBPP20 {
 
                     @Override
                     public void onNotifySuccess() {
-                        startWriteCommand(characteristic, setDateTimeCommand());
+                        startWriteCommand(characteristic, Utils.setDateTimeCommand());
                     }
 
                     @Override
@@ -121,7 +119,7 @@ public class ForaBPP20 {
             nextIteration(characteristic);
 
         } else if (value.startsWith("5154")) {
-            startWriteCommand(characteristic, setDateTimeCommand());
+            startWriteCommand(characteristic, Utils.setDateTimeCommand());
         }
     }
 
@@ -134,19 +132,6 @@ public class ForaBPP20 {
         } else {
             startWriteCommand(characteristic, Utils.checkSum(clearMemoryCommand));
         }
-    }
-
-    private String setDateTimeCommand() {
-        Date date = new Date(); // your date
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-
-        String sendHour = Integer.toHexString(cal.get(Calendar.HOUR_OF_DAY));
-        String sendMin = Integer.toHexString(cal.get(Calendar.MINUTE));
-
-        String setTimeDate = "5133" + Utils.convertIntToHex(cal) + Utils.addZeroToHex(sendMin) + Utils.addZeroToHex(sendHour) + "a3";
-        return Utils.checkSum(setTimeDate);
-
     }
 
     private void finishActivity() {
