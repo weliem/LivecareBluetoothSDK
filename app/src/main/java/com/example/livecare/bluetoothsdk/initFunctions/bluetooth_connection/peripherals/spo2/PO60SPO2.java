@@ -80,7 +80,7 @@ public class PO60SPO2 {
                     @Override
                     public void onNotifySuccess() {
                         Utils.teleHealthScanBroadcastReceiver(true);
-                        startWriteCommand(gattCharacteristicWrite, checkSum("9900"));//997F19
+                        startWriteCommand(gattCharacteristicWrite, Utils.checkSum("9900"));//997F19
                         checkIfAllDataWasReceived();
                     }
 
@@ -109,21 +109,6 @@ public class PO60SPO2 {
                     @Override
                     public void onWriteFailure(final BleException exception) {}
                 });
-    }
-
-    private String checkSum(String checksum) {
-        int sum = 0;
-        char[] value = checksum.toCharArray();
-
-        try {
-            for (int i = 0; i < checksum.length(); i += 2) {
-                String a = new StringBuilder().append("").append(value[i]).append(value[i + 1]).toString();
-                sum += Integer.parseInt(a, 16);
-            }
-        } catch (Exception ignored) {}
-
-        int summod = (sum % 256);
-        return checksum + Integer.toHexString(summod & 0x7F);
     }
 
     private void checkIfAllDataWasReceived() {
@@ -158,12 +143,12 @@ public class PO60SPO2 {
             lastResult = s;
         }
         if (size == 10) {
-            startWriteCommand(gattCharacteristicWrite, checkSum("9901"));
+            startWriteCommand(gattCharacteristicWrite, Utils.checkSum("9901"));
             lastDataRegistered = 0;
             flag = 0;
             checkIfAllDataWasReceived();
         } else {
-            startWriteCommand(gattCharacteristicWrite, checkSum("997F"));
+            startWriteCommand(gattCharacteristicWrite, Utils.checkSum("997F"));
             sendResults(lastResult);
         }
     }

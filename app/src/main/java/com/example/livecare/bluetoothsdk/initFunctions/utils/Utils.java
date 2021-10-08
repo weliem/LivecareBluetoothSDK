@@ -210,4 +210,42 @@ public class Utils {
                 }
         }
     }
+
+    public static String checkSum(String checksum) {
+        int sum = 0;
+        char[] value = checksum.toCharArray();
+
+        try {
+            for (int i = 0; i < checksum.length(); i += 2) {
+                String a = new StringBuilder().append("").append(value[i]).append(value[i + 1]).toString();
+                sum += Integer.parseInt(a, 16);
+            }
+        } catch (Exception ignored) {
+
+        }
+
+        int summod = (sum % 256);
+        return checksum + Integer.toHexString(summod & 0xFF);
+    }
+
+    public static String addZeroToHex(String str) {
+        if (str.length() == 1) {
+            str = "0" + str;
+        }
+        return str;
+    }
+
+    public static String convertIntToHex(Calendar cal) {
+        String yearFormat = String.valueOf(cal.get(Calendar.YEAR)).substring(2, 4);
+        int year = Integer.parseInt(yearFormat);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int newDay = ((year & 0x7f) << 9) | ((month + 1) << 5) | day;
+        newDay = (Integer.reverseBytes(newDay) >> 16) & 0xFFFF;
+        String returnedValue = Integer.toHexString(newDay);
+        if (returnedValue.length() != 4) {
+            returnedValue = "0" + returnedValue;
+        }
+        return returnedValue;
+    }
 }

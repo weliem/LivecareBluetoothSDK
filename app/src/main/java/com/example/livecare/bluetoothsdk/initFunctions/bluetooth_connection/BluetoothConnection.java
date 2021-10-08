@@ -11,14 +11,24 @@ import android.util.Log;
 import com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.BC57BP;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.BM67BP;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.BP3MW1;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.BPAndesFit;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.ForaBPP20;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.ForaBPTNG;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.AgaMetrixGlucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.CareSensGlucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.CareSense_S_Glucometer;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.ForaGlucometerTNG;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.ForaGlucometerV10;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.TrueMetrixAirGlucometer;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.ForaScale;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.ScaleAndesFit;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spirometer.SpirometerAndesFit;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ForaSpO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.PO60SPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanFS2OF_SPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanSPO2AndesFit;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ForaThermometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerAndesFit;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
@@ -32,8 +42,11 @@ import java.util.Map;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_AD_UA_651BLE;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BC57;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BM67;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_CVS;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_FORA;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_BP;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_TNG_FORA;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_ACCU_CHECK;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_AGAMETRIX_CVS;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_AGAMETRIX_UnPaired;
@@ -41,6 +54,8 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_CARESENS_S;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_CONTOUR;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_ONE_TOUCH;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_PREMIUM_FORA;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_PREMIUM_FORA2;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_TRUE_METRIX;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_TRUE_METRIX_AIR_CVS;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_OMRON_BP1;
@@ -50,16 +65,19 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PRIZMA;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_BEURER_PO60;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FORA;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FS2OF1;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FS2OF2;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_NONIN;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_RING_VIATOM;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_ANDES_FIT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_FORA;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SPIROMETER_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMPERATURE_SENSOR_GOVEE;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_JUMPER;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_JUMPER1;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_FORA_IR20;
 
 public class BluetoothConnection {
     private String TAG = "BluetoothConnection";
@@ -82,18 +100,21 @@ public class BluetoothConnection {
 
 
     private AccuCheckGlucometer accuCheckGlucometer;
-    private TrueMetrixAirGlucometer trueMetrixAirGlucometer;
-    private AgaMetrixGlucometer agaMetrixGlucometer;
+
+
     private OneTouchGlucometer oneTouchGlucometer;
 
     private JumperScale jumperScale;
-    private ForaSpO2 foraSpO2;*/
+    */
     private BPAndesFit bpAndesFit;
     private SpirometerAndesFit spirometerAndesFit;
     private BM67BP bm67BP;
     private BC57BP bc57BP;
     private PO60SPO2 po60SPO2;
     private CareSensGlucometer careSensGlucometer;
+    private AgaMetrixGlucometer agaMetrixGlucometer;
+    private TrueMetrixAirGlucometer trueMetrixAirGlucometer;
+
 
     private BluetoothDataResult bluetoothDataResult;
 
@@ -245,6 +266,52 @@ public class BluetoothConnection {
                     bc57BP.onConnectedSuccess(device, gatt);
                     break;
 
+                case BLE_BLOOD_PRESSURE_CVS:
+                    BP3MW1 bp3MW1 = new BP3MW1(this);
+                    bp3MW1.onConnectedSuccess(device, gatt);
+                    break;
+
+                case BLE_GLUCOMETER_TRUE_METRIX_AIR_CVS:
+                case BLE_GLUCOMETER_TRUE_METRIX:
+                    trueMetrixAirGlucometer = new TrueMetrixAirGlucometer(this);
+                    trueMetrixAirGlucometer.onConnectedSuccess(device, gatt);
+                    break;
+
+                case BLE_BLOOD_PRESSURE_FORA:
+                    ForaBPP20 foraBPP20 = new ForaBPP20(this);
+                    foraBPP20.onConnectedSuccess(device, gatt);
+                    break;
+
+                case BLE_BlOOD_PRESSURE_TNG_FORA:
+                    ForaBPTNG foraBPTNG = new ForaBPTNG(this);
+                    foraBPTNG.onConnectedSuccess(device, gatt);
+                    break;
+
+                case BLE_GLUCOMETER_PREMIUM_FORA2:
+                    ForaGlucometerTNG foraGlucometerTNG = new ForaGlucometerTNG(this);
+                    foraGlucometerTNG.onConnectedSuccess(device, gatt);
+                    break;
+
+                case BLE_GLUCOMETER_PREMIUM_FORA:
+                    ForaGlucometerV10 foraGlucometerV10 = new ForaGlucometerV10(this);
+                    foraGlucometerV10.onConnectedSuccess(device, gatt);
+                    break;
+
+                case BLE_SCALE_FORA:
+                    ForaScale foraScale = new ForaScale(this);
+                    foraScale.onConnectedSuccess(device, gatt);
+                    break;
+
+                case BLE_PULSE_OXIMETER_FORA:
+                    ForaSpO2 foraSpO2 = new ForaSpO2(this);
+                    foraSpO2.onConnectedSuccess(device, gatt);
+                    break;
+
+                case BLE_THERMOMETER_FORA_IR20:
+                    ForaThermometer foraThermometer = new ForaThermometer(this);
+                    foraThermometer.onConnectedSuccess(device, gatt);
+                    break;
+
                /* case BLE_TEMP_AET_WD:
                     ThermometerAET thermometerAET = new ThermometerAET(bluetoothConnectionFragment, mContext, deviceName);
                     thermometerAET.onConnectedSuccess(device, gatt);
@@ -274,25 +341,16 @@ public class BluetoothConnection {
                     liveCareBP.onConnectedSuccess(device, gatt);
                     break;
 
-                case BLE_BLOOD_PRESSURE_FORA:
-                    ForaBPP20 foraBPP20 = new ForaBPP20(bluetoothConnectionFragment, mContext, deviceName);
-                    foraBPP20.onConnectedSuccess(device, gatt);
-                    break;
+
 
                 case BLE_BLOOD_PRESSURE_TRANSTEK:
                     transtekBP = new TranstekBP(bluetoothConnectionFragment, mContext, deviceName);
                     transtekBP.onConnectedSuccess(device, gatt);
                     break;
 
-                case BLE_BlOOD_PRESSURE_TNG_FORA:
-                    ForaBPTNG foraBPTNG = new ForaBPTNG(bluetoothConnectionFragment, mContext, deviceName);
-                    foraBPTNG.onConnectedSuccess(device, gatt);
-                    break;
 
-                case BLE_PULSE_OXIMETER_FORA:
-                    foraSpO2 = new ForaSpO2(bluetoothConnectionFragment, mContext, deviceName);
-                    foraSpO2.onConnectedSuccess(device, gatt);
-                    break;
+
+
 
                 case BLE_PULSE_OXIMETER_MASIMO:
                     new MasimoSpO2(bluetoothConnectionFragment, device, gatt);
@@ -303,30 +361,18 @@ public class BluetoothConnection {
                     taiDocSpo2.onConnectedSuccess(device, gatt);
                     break;
 
-                case BLE_SCALE_FORA:
-                    ForaScale foraScale = new ForaScale(bluetoothConnectionFragment, mContext, deviceName);
-                    foraScale.onConnectedSuccess(device, gatt);
-                    break;
 
-                case BLE_GLUCOMETER_PREMIUM_FORA:
-                    ForaGlucometerV10 foraGlucometerV10 = new ForaGlucometerV10(bluetoothConnectionFragment, mContext, deviceName);
-                    foraGlucometerV10.onConnectedSuccess(device, gatt);
-                    break;
 
-                case BLE_GLUCOMETER_PREMIUM_FORA2:
-                    ForaGlucometerTNG foraGlucometerTNG = new ForaGlucometerTNG(bluetoothConnectionFragment, mContext, deviceName);
-                    foraGlucometerTNG.onConnectedSuccess(device, gatt);
-                    break;
+
+
+
 
                 case BLE_GLUCOMETER_TAI_DOC:
                     TaiDocGlucometer taiDocGlucometer = new TaiDocGlucometer(bluetoothConnectionFragment, mContext, deviceName);
                     taiDocGlucometer.onConnectedSuccess(device, gatt);
                     break;
 
-                case BLE_THERMOMETER_FORA_IR20:
-                    ForaThermometer foraThermometer = new ForaThermometer(bluetoothConnectionFragment, mContext, deviceName);
-                    foraThermometer.onConnectedSuccess(device, gatt);
-                    break;
+
                 case BLE_CARDIOBEAT:
                     ecgCardiBeat = new ECGCardiBeat(bluetoothConnectionFragment, mContext, deviceName);
                     ecgCardiBeat.onConnectedSuccess(device, gatt);
@@ -348,18 +394,10 @@ public class BluetoothConnection {
 
 
 
-                case BLE_BLOOD_PRESSURE_CVS:
-                    BP3MW1 bp3MW1 = new BP3MW1(bluetoothConnectionFragment, mContext, deviceName);
-                    bp3MW1.onConnectedSuccess(device, gatt);
-                    break;
 
 
 
-                case BLE_GLUCOMETER_TRUE_METRIX_AIR_CVS:
-                case BLE_GLUCOMETER_TRUE_METRIX:
-                    trueMetrixAirGlucometer = new TrueMetrixAirGlucometer(bluetoothConnectionFragment, mContext, deviceName);
-                    trueMetrixAirGlucometer.onConnectedSuccess(device, gatt);
-                    break;
+
 
                 case BLE_SCALE_ARBOLEAF:
                     ScaleArboleaf scaleArboleaf = new ScaleArboleaf(bluetoothConnectionFragment, mContext, deviceName);
@@ -396,6 +434,9 @@ public class BluetoothConnection {
                             CareSense_S_Glucometer careSense_s_glucometer = new CareSense_S_Glucometer(this);
                             careSense_s_glucometer.onConnectedSuccess(device, gatt);
                         }
+                    } else if (device.getName().contains(BLE_GLUCOMETER_AGAMETRIX_CVS) || device.getName().contains(BLE_GLUCOMETER_AGAMETRIX_UnPaired)) {
+                        agaMetrixGlucometer = new AgaMetrixGlucometer(this);
+                        agaMetrixGlucometer.onConnectedSuccess(device, gatt);
                     }/*else if (device.getName().contains(BLE_GLUCOMETER_CONTOUR)) {
                         ContourGlucometer contourGlucometer = new ContourGlucometer(bluetoothConnectionFragment, mContext, deviceName);
                         contourGlucometer.onConnectedSuccess(device, gatt);
@@ -404,9 +445,6 @@ public class BluetoothConnection {
                     } else if (device.getName().contains(BLE_GLUCOMETER_ACCU_CHECK)) {
                         accuCheckGlucometer = new AccuCheckGlucometer(bluetoothConnectionFragment, mContext, deviceName);
                         accuCheckGlucometer.onConnectedSuccess(device,gatt);
-                    } else if (device.getName().contains(BLE_GLUCOMETER_AGAMETRIX_CVS) || device.getName().contains(BLE_GLUCOMETER_AGAMETRIX_UnPaired)) {
-                        agaMetrixGlucometer = new AgaMetrixGlucometer(bluetoothConnectionFragment, mContext, mContext.getString(R.string.ble_device_name_glucometer));
-                        agaMetrixGlucometer.onConnectedSuccess(device, gatt);
                     } else if (device.getName().contains(BLE_GLUCOMETER_ONE_TOUCH)) {
                         oneTouchGlucometer = new OneTouchGlucometer(bluetoothConnectionFragment, mContext, deviceName);
                         oneTouchGlucometer.onConnectedSuccess(device, gatt);
@@ -520,10 +558,7 @@ public class BluetoothConnection {
         if (jumperScale != null) {
             jumperScale.onDestroy();
         }
-
-        if (foraSpO2 != null) {
-            foraSpO2.destroyContext();
-        }*/
+*/
         if (spirometerAndesFit != null) {
             spirometerAndesFit.onDestroy();
         }
@@ -575,9 +610,9 @@ public class BluetoothConnection {
         } else if (deviceFlag == 3) {
             //accuCheckGlucometer.startNotifyCustom();
         } else if (deviceFlag == 5) {
-           // trueMetrixAirGlucometer.startNotifyCustom();
+             trueMetrixAirGlucometer.startNotifyCustom();
         } else if (deviceFlag == 6) {
-           // agaMetrixGlucometer.startNotifyCustom();
+            agaMetrixGlucometer.startNotifyCustom();
         } else if (deviceFlag == 7) {
            // oneTouchGlucometer.startNotifyCustom();
         }
