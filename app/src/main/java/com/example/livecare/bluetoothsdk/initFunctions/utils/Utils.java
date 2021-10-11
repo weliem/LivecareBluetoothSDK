@@ -261,4 +261,11 @@ public class Utils {
         String setTimeDate = "5133" + convertIntToHex(cal) + addZeroToHex(sendMin) + addZeroToHex(sendHour) + "a3";
         return checkSum(setTimeDate);
     }
+
+    public static  String convertBigEndian(String str) {
+        if (str.length() == 3) {
+            str = "0" + str;
+        }
+        return str.substring(2, 4) + str.substring(0, 2);
+    }
 }
