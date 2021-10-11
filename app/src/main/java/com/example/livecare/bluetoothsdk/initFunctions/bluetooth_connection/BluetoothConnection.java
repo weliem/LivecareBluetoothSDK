@@ -23,6 +23,7 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.ForaGlucometerTNG;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.ForaGlucometerV10;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.IndieGlucometer;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.OneTouchGlucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.TrueMetrixAirGlucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.ForaScale;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.IndieScale;
@@ -32,6 +33,7 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ForaSpO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.JumperSPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.MasimoSpO2;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.NoninSpO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.PO60SPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanFS2OF_SPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanSPO2AndesFit;
@@ -118,7 +120,7 @@ public class BluetoothConnection {
     private AccuCheckGlucometer accuCheckGlucometer;
 
 
-    private OneTouchGlucometer oneTouchGlucometer;
+
 
 
     */
@@ -134,6 +136,7 @@ public class BluetoothConnection {
     private IndieGlucometer indieGlucometer;
     private IndieScale indieScale;
     private JumperScale jumperScale;
+    private OneTouchGlucometer oneTouchGlucometer;
 
     private BluetoothDataResult bluetoothDataResult;
 
@@ -446,13 +449,6 @@ public class BluetoothConnection {
                     scaleArboleaf.onConnectedSuccess(device, gatt);
                     break;
 
-
-
-
-
-
-
-
 */
                 default:
                     if (device.getName().contains(BLE_OMRON_BP1) || device.getName().contains(BLE_OMRON_BP2) ||
@@ -476,23 +472,21 @@ public class BluetoothConnection {
                     }  else if (device.getName().contains(BLE_TEMP_JUMPER) || device.getName().contains(BLE_TEMP_JUMPER1)) {
                         JumperTemp jumperTemp = new JumperTemp(this);
                         jumperTemp.onConnectedSuccess(device, gatt);
-                    } /*else if (device.getName().contains(BLE_GLUCOMETER_CONTOUR)) {
+                    }else if (device.getName().startsWith(BLE_PULSE_OXIMETER_NONIN)) {
+                         new NoninSpO2(this,device, gatt);
+                    }  else if (device.getName().contains(BLE_GLUCOMETER_ONE_TOUCH)) {
+                        oneTouchGlucometer = new OneTouchGlucometer(this, device, gatt);
+                    } else if (device.getName().contains(BLE_PRIZMA)) {
+                       // new PrizmaDevice(this).onConnectedSuccess( device);
+                    }  /*else if (device.getName().contains(BLE_GLUCOMETER_CONTOUR)) {
                         ContourGlucometer contourGlucometer = new ContourGlucometer(bluetoothConnectionFragment, mContext, deviceName);
                         contourGlucometer.onConnectedSuccess(device, gatt);
-                    } else if (device.getName().contains(BLE_PRIZMA)) {
-                        bluetoothConnectionFragment.goToPrizmaFragment(device);
-                    } else if (device.getName().contains(BLE_GLUCOMETER_ACCU_CHECK)) {
+                    }else if (device.getName().contains(BLE_GLUCOMETER_ACCU_CHECK)) {
                         accuCheckGlucometer = new AccuCheckGlucometer(bluetoothConnectionFragment, mContext, deviceName);
                         accuCheckGlucometer.onConnectedSuccess(device,gatt);
-                    } else if (device.getName().contains(BLE_GLUCOMETER_ONE_TOUCH)) {
-                        oneTouchGlucometer = new OneTouchGlucometer(bluetoothConnectionFragment, mContext, deviceName);
-                        oneTouchGlucometer.onConnectedSuccess(device, gatt);
                     }else if (device.getName().contains(BLE_RING_VIATOM)) {
                         O2RingViatom o2RingViatom = new O2RingViatom(bluetoothConnectionFragment, mContext, deviceName);
                         o2RingViatom.onConnectedSuccess(device, gatt);
-                    } else if (device.getName().startsWith(BLE_PULSE_OXIMETER_NONIN)) {
-                        NoninSpO2 noninSpO2 = new NoninSpO2(bluetoothConnectionFragment, mContext, deviceName);
-                        noninSpO2.onConnectedSuccess(device, gatt);
                     } else if (device.getName().startsWith(BLE_BLOOD_PRESSURE_AD_UA_651BLE)) {
                         ad_bp_ua_651BLE = new AD_BP_UA_651BLE(bluetoothConnectionFragment, mContext, deviceName);
                         ad_bp_ua_651BLE.onConnectedSuccess(device, gatt);
@@ -650,7 +644,7 @@ public class BluetoothConnection {
         } else if (deviceFlag == 6) {
             agaMetrixGlucometer.startNotifyCustom();
         } else if (deviceFlag == 7) {
-           // oneTouchGlucometer.startNotifyCustom();
+            oneTouchGlucometer.startNotifyCustom();
         }
     }
 }
