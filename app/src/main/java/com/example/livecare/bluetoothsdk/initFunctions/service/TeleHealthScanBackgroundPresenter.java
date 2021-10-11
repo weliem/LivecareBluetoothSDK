@@ -1,5 +1,6 @@
 package com.example.livecare.bluetoothsdk.initFunctions.service;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import com.example.livecare.bluetoothsdk.initFunctions.enums.BleDevicesName;
+import com.example.livecare.bluetoothsdk.initFunctions.enums.TypeBleDevices;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
@@ -60,6 +62,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_NONIN;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_TAI_DOC;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_RING_VIATOM;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_AD_UC_352BLE;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_ARBOLEAF;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_FORA;
@@ -82,6 +85,8 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_VIATOM;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_V_ALERT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.currentTimeForLastTelehealthService;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Utils.checkPairedDevices;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Utils.createBond;
 
 public class TeleHealthScanBackgroundPresenter {
 
@@ -90,6 +95,7 @@ public class TeleHealthScanBackgroundPresenter {
     private long startTime = 0;
     private Handler handler;
     private boolean startScan;
+    private BleDevice mDevice;
     //private VAlertDevice vAlertDevice;
     private final BroadcastReceiver teleHealthScanBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -126,6 +132,9 @@ public class TeleHealthScanBackgroundPresenter {
         if (teleHealthService != null) {
             notifyScanStarted(teleHealthService);
         }
+
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        teleHealthService.registerReceiver(mReceiver, filter);
     }
 
     private void notifyScanStarted(Context context) {
@@ -356,11 +365,11 @@ public class TeleHealthScanBackgroundPresenter {
                     } else if (device.getName().startsWith(BLE_GLUCOMETER_CARESENS_S)) {
                         decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices);
                     } else if (device.getName().contains(BLE_GLUCOMETER_CONTOUR)) {
-                        if (Utils.checkPairedDevices(device.getMac())) {
+                        if (checkPairedDevices(device.getMac())) {
                             decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices);
                         } else {
                             try {
-                                if (Utils.createBond(device.getDevice())) {
+                                if (createBond(device.getDevice())) {
                                     handler.postDelayed(() -> decisionFunctionAfterGettingBTMac(BleDevicesName.Gl.toString(), device, otherDevices), 2000);
                                 }
                             } catch (Exception exception) {
@@ -402,13 +411,29 @@ public class TeleHealthScanBackgroundPresenter {
                             decisionFunctionAfterGettingBTMac(BleDevicesName.SpO2.toString(), device, otherDevices);
                         }
                     } else if (device.getName().contains(BLE_BLOOD_PRESSURE_AD_UA_651BLE)) {
-                        if (Utils.checkPairedDevices(device.getMac())) {
-                            Utils.unPairDevice(device.getDevice());
+                        if (mDevice != null){
+                            return;
+                        }
+                        mDevice = device;
+                        if (checkPairedDevices(device.getMac())) {
+                            decisionFunctionAfterGettingBTMac(BleDevicesName.BP.toString(), device, otherDevices);
                         } else {
                             try {
-                                if (Utils.createBond(device.getDevice())) {
-                                    decisionFunctionAfterGettingBTMac(BleDevicesName.BP.toString(), device, otherDevices);
-                                }
+                                createBond(device.getDevice());
+                            } catch (Exception exception) {
+                                exception.printStackTrace();
+                            }
+                        }
+                    }else if (device.getName().contains(BLE_SCALE_AD_UC_352BLE)) {
+                        if (mDevice != null){
+                            return;
+                        }
+                        mDevice = device;
+                        if (checkPairedDevices(device.getMac())) {
+                            decisionFunctionAfterGettingBTMac(BleDevicesName.WS.toString(), device, otherDevices);
+                        } else {
+                            try {
+                                createBond(device.getDevice());
                             } catch (Exception exception) {
                                 exception.printStackTrace();
                             }
@@ -460,6 +485,41 @@ public class TeleHealthScanBackgroundPresenter {
         }
     }
 
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
+
+                switch(state){
+                    case BluetoothDevice.BOND_BONDING:
+                        // Bonding...
+                        break;
+
+                    case BluetoothDevice.BOND_BONDED:
+                        // Bonded...
+
+                        if(mDevice != null){
+                            if(mDevice.getName().contains(BLE_BLOOD_PRESSURE_AD_UA_651BLE)){
+                                decisionFunctionAfterGettingBTMac(BleDevicesName.BP.toString(), mDevice, "2");
+                            }else if(mDevice.getName().contains(BLE_SCALE_AD_UC_352BLE)){
+                                decisionFunctionAfterGettingBTMac(BleDevicesName.WS.toString(), mDevice, "2");
+                            }
+                            mDevice = null;
+                        }
+                        break;
+
+                    case BluetoothDevice.BOND_NONE:
+                        mDevice = null;
+                        // Not bonded...
+                        break;
+                }
+            }
+        }
+    };
+
 
     void onDestroy() {
         if (handler != null) {
@@ -467,6 +527,9 @@ public class TeleHealthScanBackgroundPresenter {
         }
         if (teleHealthService != null) {
             teleHealthService.unregisterReceiver(teleHealthScanBroadcastReceiver);
+        }
+        if (teleHealthService != null) {
+            teleHealthService.unregisterReceiver(mReceiver);
         }
         teleHealthService = null;
     }
