@@ -86,4 +86,6 @@ public class Constants {
     public static final String BLE_SPIROMETER_SMART_ONE = "SO-004-";
     public static final String BLE_BLOOD_PRESSURE_AD_UA_651BLE = "A&D_UA-651BLE";
     public static final String BLE_SCALE_AD_UC_352BLE = "A&D_UC-352BLE";
+
+
 }
