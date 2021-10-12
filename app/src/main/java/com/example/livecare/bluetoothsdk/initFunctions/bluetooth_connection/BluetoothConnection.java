@@ -18,10 +18,13 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.ForaBPTNG;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.IndieBP;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.JumperBP;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.LiveCareBP;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.ecg.ECGCardiBeat;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.AccuCheckGlucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.AgaMetrixGlucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.CareSensGlucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.CareSense_S_Glucometer;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.ContourGlucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.ForaGlucometerTNG;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.ForaGlucometerV10;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.IndieGlucometer;
@@ -32,6 +35,7 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.IndieScale;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.JumperScale;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.ScaleAndesFit;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.ScaleArboleaf;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spirometer.SpirometerAndesFit;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ForaSpO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.JumperSPO2;
@@ -63,6 +67,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_BP;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_INDIE_HEALTH;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_TNG_FORA;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_CARDIOBEAT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_ACCU_CHECK;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_AGAMETRIX_CVS;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_AGAMETRIX_UnPaired;
@@ -88,9 +93,9 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_JUMPER;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_MASIMO;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_NONIN;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_RING_VIATOM;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_AD_UC_352BLE;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_ANDES_FIT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_ARBOLEAF;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_FORA;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_INDIE_HEALTH;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_INDIE_HEALTH_SMALL;
@@ -107,15 +112,16 @@ public class BluetoothConnection {
     private LiveCareMainClass liveCareMainClass;
     private Application app;
     private int failFlagCount = 0;
-  /*  private LiveCareBP liveCareBP;
+  /*
     private TranstekBP transtekBP;
     private ScanSPO2 scanSPO2;
     private OmronBP omronBP;
-    private ECGCardiBeat ecgCardiBeat;
+
     private VivaLNKTemperature vivaLNKTemperature;
     private VivaLNKECGBackground vivaLNKECGBackground;
 
     */
+    private BluetoothDataResult bluetoothDataResult;
     private BPAndesFit bpAndesFit;
     private SpirometerAndesFit spirometerAndesFit;
     private BM67BP bm67BP;
@@ -132,7 +138,8 @@ public class BluetoothConnection {
     private AccuCheckGlucometer accuCheckGlucometer;
     private AD_BP_UA_651BLE ad_bp_ua_651BLE;
     private AD_SCALE_UC_352BLE ad_scale_uc_352BLE;
-    private BluetoothDataResult bluetoothDataResult;
+    private ECGCardiBeat ecgCardiBeat;
+
 
     public BluetoothConnection(LiveCareMainClass liveCareMainClass, BluetoothDataResult bluetoothDataResult, Application app) {
         this.app = app;
@@ -366,45 +373,33 @@ public class BluetoothConnection {
                     new MasimoSpO2(this, device, gatt);
                     break;
 
+                case BLE_CARDIOBEAT:
+                    ecgCardiBeat = new ECGCardiBeat(this);
+                    ecgCardiBeat.onConnectedSuccess(device, gatt);
+                    break;
+
+                case BLE_BlOOD_PRESSURE_BP:
+                    new LiveCareBP(this, device, gatt);
+                    break;
+
+                case BLE_SCALE_ARBOLEAF:
+                    ScaleArboleaf scaleArboleaf = new ScaleArboleaf(this,device, gatt);
+                    break;
+
                /* case BLE_TEMP_AET_WD:
                     ThermometerAET thermometerAET = new ThermometerAET(bluetoothConnectionFragment, mContext, deviceName);
                     thermometerAET.onConnectedSuccess(device, gatt);
                     break;
-
-
-
-
-
-
-
-                case BLE_BlOOD_PRESSURE_BP:
-                    liveCareBP = new LiveCareBP(bluetoothConnectionFragment, mContext, deviceName);
-                    liveCareBP.onConnectedSuccess(device, gatt);
-                    break;
-
-
 
                 case BLE_BLOOD_PRESSURE_TRANSTEK:
                     transtekBP = new TranstekBP(bluetoothConnectionFragment, mContext, deviceName);
                     transtekBP.onConnectedSuccess(device, gatt);
                     break;
 
-
-
-
-
-
-
                 case BLE_PULSE_OXIMETER_TAI_DOC:
                     TaiDocSPO2 taiDocSpo2 = new TaiDocSPO2(bluetoothConnectionFragment, mContext, deviceName);
                     taiDocSpo2.onConnectedSuccess(device, gatt);
                     break;
-
-
-
-
-
-
 
                 case BLE_GLUCOMETER_TAI_DOC:
                     TaiDocGlucometer taiDocGlucometer = new TaiDocGlucometer(bluetoothConnectionFragment, mContext, deviceName);
@@ -412,10 +407,7 @@ public class BluetoothConnection {
                     break;
 
 
-                case BLE_CARDIOBEAT:
-                    ecgCardiBeat = new ECGCardiBeat(bluetoothConnectionFragment, mContext, deviceName);
-                    ecgCardiBeat.onConnectedSuccess(device, gatt);
-                    break;
+
                 case BLE_THERMOMETER_VIATOM:
                     ThermometerViatom thermometerViatom = new ThermometerViatom(bluetoothConnectionFragment, mContext, deviceName);
                     thermometerViatom.onConnectedSuccess(device, gatt);
@@ -429,18 +421,6 @@ public class BluetoothConnection {
                 case BLE_BP_WELLUE:
                     WellueBP wellueBP = new WellueBP(bluetoothConnectionFragment, mContext, deviceName);
                     wellueBP.onConnectedSuccess(device, gatt);
-                    break;
-
-
-
-
-
-
-
-
-                case BLE_SCALE_ARBOLEAF:
-                    ScaleArboleaf scaleArboleaf = new ScaleArboleaf(bluetoothConnectionFragment, mContext, deviceName);
-                    scaleArboleaf.onConnectedSuccess(device, gatt);
                     break;
 
 */
@@ -479,6 +459,9 @@ public class BluetoothConnection {
                     } else if (device.getName().startsWith(BLE_SCALE_AD_UC_352BLE)) {
                         ad_scale_uc_352BLE = new AD_SCALE_UC_352BLE(this);
                         ad_scale_uc_352BLE.onConnectedSuccess(device, gatt);
+                    } else if (device.getName().contains(BLE_GLUCOMETER_CONTOUR)) {
+                        ContourGlucometer contourGlucometer = new ContourGlucometer(this);
+                        contourGlucometer.onConnectedSuccess(device, gatt);
                     }
 
 
@@ -512,6 +495,10 @@ public class BluetoothConnection {
         if (bleDevice.getName().equalsIgnoreCase(BLE_BlOOD_PRESSURE_INDIE_HEALTH) && indieBP != null) {
             indieBP.onDisConnected();
         }
+
+        if (bleDevice.getName().equalsIgnoreCase(BLE_CARDIOBEAT) && ecgCardiBeat != null) {
+            ecgCardiBeat.onDisConnected();
+        }
       /*
 
 
@@ -520,9 +507,7 @@ public class BluetoothConnection {
             transtekBP.onDisConnected();
         }
 
-        if (bleDevice.getName().equalsIgnoreCase(BLE_CARDIOBEAT) && ecgCardiBeat != null) {
-            ecgCardiBeat.onDisConnected();
-        }*/
+        */
 
         /*if (bleDevice.getName().startsWith(BLE_PRIZMA)) {
            // bluetoothConnectionFragment.forceFinishActivity();
@@ -573,9 +558,7 @@ public class BluetoothConnection {
         /*   if (handler != null && runnable != null) {
             handler.removeCallbacks(runnable);
         }
-        if (liveCareBP != null) {
-            liveCareBP.onDestroy();
-        }
+
         if (scanSPO2 != null) {
             scanSPO2.onDestroy();
         }
@@ -596,9 +579,7 @@ public class BluetoothConnection {
             vivaLNKECGBackground.onDestroy();
         }
 
-        if (ecgCardiBeat != null) {
-            ecgCardiBeat.onDestroy();
-        }
+
 */
     }
 
