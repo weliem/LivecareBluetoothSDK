@@ -15,22 +15,21 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JumperTemp {
+public class ThermometerUnaan {
     private final BluetoothConnection bluetoothConnection;
     private BleDevice bleDevice;
 
-    public JumperTemp(BluetoothConnection bluetoothConnection) {
+    public ThermometerUnaan(BluetoothConnection bluetoothConnection,BleDevice device, BluetoothGatt gatt) {
         this.bluetoothConnection = bluetoothConnection;
+        bleDevice = device;
+        onConnectedSuccess(gatt);
     }
 
-    public void onConnectedSuccess(BleDevice device, BluetoothGatt gatt) {
-        bleDevice = device;
+    public void onConnectedSuccess(BluetoothGatt gatt) {
         for (BluetoothGattService service : gatt.getServices()) {
-            if (service.getUuid().toString().contains("0000fff0")) {
-                for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
-                    if ((characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
-                        startNotify(characteristic);
-                    }
+            for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
+                if (characteristic.getUuid().toString().contains("0000acab")) {
+                    startNotify(characteristic);
                 }
             }
         }
@@ -44,13 +43,10 @@ public class JumperTemp {
                 new BleNotifyCallback() {
 
                     @Override
-                    public void onNotifySuccess() {
-
-                    }
+                    public void onNotifySuccess() {}
 
                     @Override
-                    public void onNotifyFailure(final BleException exception) {
-                    }
+                    public void onNotifyFailure(final BleException exception) {}
 
                     @Override
                     public void onCharacteristicChanged(byte[] data) {
@@ -60,27 +56,17 @@ public class JumperTemp {
     }
 
     private void calculateResults(String formatHexString) {
-        if (!formatHexString.startsWith("e0")) {
-            String temp_concatenated = new BigInteger(formatHexString.substring(4, 8), 16).toString();
-            double temp_celsius;
-            temp_celsius = Integer.parseInt(temp_concatenated) * 0.01;
-            double fahrenheit = 32 + (temp_celsius * 9 / 5);
-            String valueToSend = new DecimalFormat("##.#").format(fahrenheit);
-
-            String position;
-            if (new BigInteger(formatHexString.substring(2, 4), 16).toString().equals("33")) {
-                position = "Forehead";
-            } else {
-                position = "Ear";
-            }
-            updateTemperatureToFireBase(valueToSend, position);
-        }
+        String temp = new BigInteger(formatHexString.substring(6, 10), 16).toString();
+        double temp_celsius;
+        temp_celsius = Integer.parseInt(temp) * 0.1;
+        double fahrenheit = 32 + (temp_celsius * 9 / 5);
+        String valueToSend = new DecimalFormat("##.#").format(fahrenheit);
+        updateTemperatureToFireBase(valueToSend);
     }
 
-    private void updateTemperatureToFireBase(String temp, String position) {
+    private void updateTemperatureToFireBase(String temp) {
         Map<String, Object> objectMap = new HashMap<>();
         objectMap.put("temperature", temp);
-        objectMap.put("location", position);
         bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Temp.stringValue);
         BleManager.getInstance().disconnect(bleDevice);
     }

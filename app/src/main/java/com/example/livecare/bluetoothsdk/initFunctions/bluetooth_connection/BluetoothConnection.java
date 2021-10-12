@@ -43,11 +43,14 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.NoninSpO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.PO60SPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanFS2OF_SPO2;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanSPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanSPO2AndesFit;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ForaThermometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.GoveeH5074TempDevice;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.JumperTemp;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerAET;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerAndesFit;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerUnaan;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
@@ -86,6 +89,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_OMRON_BP4;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PRIZMA;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_ANDES_FIT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_BERRYMED;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_BEURER_PO60;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FORA;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_FS2OF1;
@@ -102,10 +106,12 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_JUMPER;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SPIROMETER_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMPERATURE_SENSOR_GOVEE;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_AET_WD;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_JUMPER;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_JUMPER1;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_FORA_IR20;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_UNAAN;
 
 public class BluetoothConnection {
     private String TAG = "BluetoothConnection";
@@ -114,7 +120,7 @@ public class BluetoothConnection {
     private int failFlagCount = 0;
   /*
     private TranstekBP transtekBP;
-    private ScanSPO2 scanSPO2;
+
     private OmronBP omronBP;
 
     private VivaLNKTemperature vivaLNKTemperature;
@@ -139,7 +145,6 @@ public class BluetoothConnection {
     private AD_BP_UA_651BLE ad_bp_ua_651BLE;
     private AD_SCALE_UC_352BLE ad_scale_uc_352BLE;
     private ECGCardiBeat ecgCardiBeat;
-
 
     public BluetoothConnection(LiveCareMainClass liveCareMainClass, BluetoothDataResult bluetoothDataResult, Application app) {
         this.app = app;
@@ -238,10 +243,9 @@ public class BluetoothConnection {
     private void onConnectedSuccess(BleDevice device, BluetoothGatt gatt) {
         if (device.getName() != null) {
             switch (device.getName()) {
-                /*case BLE_PULSE_OXIMETER_BERRYMED:
-                    scanSPO2 = new ScanSPO2(bluetoothConnectionFragment, mContext, deviceName);
-                    scanSPO2.onConnectedSuccess(device, gatt);
-                    break;*/
+                case BLE_PULSE_OXIMETER_BERRYMED:
+                    new ScanSPO2(this,device, gatt);
+                    break;
 
                 case BLE_PULSE_OXIMETER_FS2OF1:
                 case BLE_PULSE_OXIMETER_FS2OF2:
@@ -383,13 +387,17 @@ public class BluetoothConnection {
                     break;
 
                 case BLE_SCALE_ARBOLEAF:
-                    ScaleArboleaf scaleArboleaf = new ScaleArboleaf(this,device, gatt);
+                    new ScaleArboleaf(this,device, gatt);
                     break;
 
-               /* case BLE_TEMP_AET_WD:
-                    ThermometerAET thermometerAET = new ThermometerAET(bluetoothConnectionFragment, mContext, deviceName);
-                    thermometerAET.onConnectedSuccess(device, gatt);
+                case BLE_TEMP_AET_WD:
+                    new ThermometerAET(this,device, gatt);
                     break;
+
+                case BLE_THERMOMETER_UNAAN:
+                    new ThermometerUnaan(this,device, gatt);
+                    break;
+               /*
 
                 case BLE_BLOOD_PRESSURE_TRANSTEK:
                     transtekBP = new TranstekBP(bluetoothConnectionFragment, mContext, deviceName);
@@ -413,10 +421,7 @@ public class BluetoothConnection {
                     thermometerViatom.onConnectedSuccess(device, gatt);
                     break;
 
-                case BLE_THERMOMETER_UNAAN:
-                    ThermometerUnaan thermometerUnaan = new ThermometerUnaan(bluetoothConnectionFragment, mContext, deviceName);
-                    thermometerUnaan.onConnectedSuccess(device, gatt);
-                    break;
+
 
                 case BLE_BP_WELLUE:
                     WellueBP wellueBP = new WellueBP(bluetoothConnectionFragment, mContext, deviceName);
@@ -557,10 +562,6 @@ public class BluetoothConnection {
 
         /*   if (handler != null && runnable != null) {
             handler.removeCallbacks(runnable);
-        }
-
-        if (scanSPO2 != null) {
-            scanSPO2.onDestroy();
         }
 
         if (ad_bp_ua_651BLE != null) {
