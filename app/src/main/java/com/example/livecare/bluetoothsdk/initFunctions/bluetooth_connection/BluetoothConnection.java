@@ -31,6 +31,7 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.ForaGlucometerV10;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.IndieGlucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.OneTouchGlucometer;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.TaiDocGlucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.TrueMetrixAirGlucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.AD_SCALE_UC_352BLE;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.ForaScale;
@@ -47,6 +48,7 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanFS2OF_SPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanSPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanSPO2AndesFit;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.TaiDocSpo2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ForaThermometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.GoveeH5074TempDevice;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.JumperTemp;
@@ -86,6 +88,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_ONE_TOUCH;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_PREMIUM_FORA;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_PREMIUM_FORA2;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_TAI_DOC;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_TRUE_METRIX;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_TRUE_METRIX_AIR_CVS;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_OMRON_BP1;
@@ -102,6 +105,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_JUMPER;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_MASIMO;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_NONIN;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_TAI_DOC;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_AD_UC_352BLE;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_ARBOLEAF;
@@ -415,22 +419,15 @@ public class BluetoothConnection {
                 case BLE_BP_WELLUE:
                     new WellueBP(this, device, gatt);
                     break;
-               /*
-
-
-
-                case BLE_PULSE_OXIMETER_TAI_DOC:
-                    TaiDocSPO2 taiDocSpo2 = new TaiDocSPO2(bluetoothConnectionFragment, mContext, deviceName);
-                    taiDocSpo2.onConnectedSuccess(device, gatt);
-                    break;
 
                 case BLE_GLUCOMETER_TAI_DOC:
-                    TaiDocGlucometer taiDocGlucometer = new TaiDocGlucometer(bluetoothConnectionFragment, mContext, deviceName);
-                    taiDocGlucometer.onConnectedSuccess(device, gatt);
+                    new TaiDocGlucometer(this, device, gatt);
                     break;
 
-
-
+                case BLE_PULSE_OXIMETER_TAI_DOC:
+                    new TaiDocSpo2(this, device, gatt);
+                    break;
+               /*
                 case BLE_THERMOMETER_VIATOM:
                     ThermometerViatom thermometerViatom = new ThermometerViatom(bluetoothConnectionFragment, mContext, deviceName);
                     thermometerViatom.onConnectedSuccess(device, gatt);
