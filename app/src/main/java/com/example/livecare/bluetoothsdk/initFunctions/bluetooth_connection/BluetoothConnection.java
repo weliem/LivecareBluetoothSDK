@@ -19,6 +19,8 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.IndieBP;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.JumperBP;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.LiveCareBP;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.TranstekBP;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.WellueBP;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.ecg.ECGCardiBeat;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.AccuCheckGlucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.AgaMetrixGlucometer;
@@ -51,6 +53,7 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerAET;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerAndesFit;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerUnaan;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.VicksTemp;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
@@ -66,6 +69,8 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_CVS;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_FORA;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_JUMPER;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_TRANSTEK;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BP_WELLUE;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_BP;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_INDIE_HEALTH;
@@ -110,6 +115,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_JUMPER;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_JUMPER1;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_VICKS;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_FORA_IR20;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_UNAAN;
 
@@ -119,7 +125,7 @@ public class BluetoothConnection {
     private Application app;
     private int failFlagCount = 0;
   /*
-    private TranstekBP transtekBP;
+
 
     private OmronBP omronBP;
 
@@ -145,6 +151,7 @@ public class BluetoothConnection {
     private AD_BP_UA_651BLE ad_bp_ua_651BLE;
     private AD_SCALE_UC_352BLE ad_scale_uc_352BLE;
     private ECGCardiBeat ecgCardiBeat;
+    private TranstekBP transtekBP;
 
     public BluetoothConnection(LiveCareMainClass liveCareMainClass, BluetoothDataResult bluetoothDataResult, Application app) {
         this.app = app;
@@ -397,12 +404,20 @@ public class BluetoothConnection {
                 case BLE_THERMOMETER_UNAAN:
                     new ThermometerUnaan(this,device, gatt);
                     break;
+                case BLE_BLOOD_PRESSURE_TRANSTEK:
+                    transtekBP = new TranstekBP(this,device, gatt);
+                    break;
+
+                case BLE_TEMP_VICKS:
+                    new VicksTemp(this, device, gatt);
+                    break;
+
+                case BLE_BP_WELLUE:
+                    new WellueBP(this, device, gatt);
+                    break;
                /*
 
-                case BLE_BLOOD_PRESSURE_TRANSTEK:
-                    transtekBP = new TranstekBP(bluetoothConnectionFragment, mContext, deviceName);
-                    transtekBP.onConnectedSuccess(device, gatt);
-                    break;
+
 
                 case BLE_PULSE_OXIMETER_TAI_DOC:
                     TaiDocSPO2 taiDocSpo2 = new TaiDocSPO2(bluetoothConnectionFragment, mContext, deviceName);
@@ -423,10 +438,7 @@ public class BluetoothConnection {
 
 
 
-                case BLE_BP_WELLUE:
-                    WellueBP wellueBP = new WellueBP(bluetoothConnectionFragment, mContext, deviceName);
-                    wellueBP.onConnectedSuccess(device, gatt);
-                    break;
+
 
 */
                 default:
@@ -504,15 +516,10 @@ public class BluetoothConnection {
         if (bleDevice.getName().equalsIgnoreCase(BLE_CARDIOBEAT) && ecgCardiBeat != null) {
             ecgCardiBeat.onDisConnected();
         }
-      /*
-
-
 
         if (bleDevice.getName().equalsIgnoreCase(BLE_BLOOD_PRESSURE_TRANSTEK) && transtekBP != null) {
             transtekBP.onDisConnected();
         }
-
-        */
 
         /*if (bleDevice.getName().startsWith(BLE_PRIZMA)) {
            // bluetoothConnectionFragment.forceFinishActivity();

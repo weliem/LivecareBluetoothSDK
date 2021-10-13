@@ -50,6 +50,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_JUMPER;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_JUMPER1;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_VICKS;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_FORA_IR20;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_UNAAN;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_VIATOM;
@@ -173,6 +174,7 @@ public class Utils {
             case BLE_THERMOMETER_FORA_IR20:
             case BLE_THERMOMETER_VIATOM:
             case BLE_THERMOMETER_UNAAN:
+            case BLE_TEMP_VICKS:
                 Constants.currentTimeForLastTelehealthServiceTEMP = Calendar.getInstance().getTime().getTime();
                 break;
 
@@ -267,5 +269,15 @@ public class Utils {
             str = "0" + str;
         }
         return str.substring(2, 4) + str.substring(0, 2);
+    }
+
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i + 1), 16));
+        }
+        return data;
     }
 }
