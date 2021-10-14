@@ -45,6 +45,7 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.JumperSPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.MasimoSpO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.NoninSpO2;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.O2RingViatom;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.PO60SPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanFS2OF_SPO2;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.spo2.ScanSPO2;
@@ -56,6 +57,7 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerAET;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerAndesFit;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerUnaan;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerViatom;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.VicksTemp;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
@@ -65,7 +67,6 @@ import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.data.BleDevice;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.exception.BleException;
 import java.util.Calendar;
 import java.util.Map;
-
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_AD_UA_651BLE;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BC57;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BM67;
@@ -107,6 +108,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_MASIMO;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_NONIN;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_PULSE_OXIMETER_TAI_DOC;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_RING_VIATOM;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_AD_UC_352BLE;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_ANDES_FIT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_ARBOLEAF;
@@ -123,6 +125,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_VICKS;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_FORA_IR20;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_UNAAN;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_VIATOM;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_V_ALERT;
 
 public class BluetoothConnection {
@@ -130,15 +133,6 @@ public class BluetoothConnection {
     private LiveCareMainClass liveCareMainClass;
     private Application app;
     private int failFlagCount = 0;
-  /*
-
-
-    private OmronBP omronBP;
-
-    private VivaLNKTemperature vivaLNKTemperature;
-    private VivaLNKECGBackground vivaLNKECGBackground;
-
-    */
     private BluetoothDataResult bluetoothDataResult;
     private BPAndesFit bpAndesFit;
     private SpirometerAndesFit spirometerAndesFit;
@@ -158,6 +152,9 @@ public class BluetoothConnection {
     private AD_SCALE_UC_352BLE ad_scale_uc_352BLE;
     private ECGCardiBeat ecgCardiBeat;
     private TranstekBP transtekBP;
+    /* private OmronBP omronBP;
+    private VivaLNKTemperature vivaLNKTemperature;
+    private VivaLNKECGBackground vivaLNKECGBackground; */
 
     public BluetoothConnection(LiveCareMainClass liveCareMainClass, BluetoothDataResult bluetoothDataResult, Application app) {
         this.app = app;
@@ -167,7 +164,7 @@ public class BluetoothConnection {
 
     public void addDeviceFromScanning(BleDevice bleDevice, String devicesOrigin, String deviceName) {
         Utils.teleHealthScanBroadcastReceiver(false);
-
+        Log.d(TAG, "addDeviceFromScanning: "+devicesOrigin);
         if (!BleManager.getInstance().getIsConnecting()){
             connect(deviceName, bleDevice);
         }
@@ -434,20 +431,14 @@ public class BluetoothConnection {
                     new VAlertDevice(this, device, gatt);
                     break;
 
-               /*
                 case BLE_THERMOMETER_VIATOM:
-                    ThermometerViatom thermometerViatom = new ThermometerViatom(bluetoothConnectionFragment, mContext, deviceName);
-                    thermometerViatom.onConnectedSuccess(device, gatt);
+                    new ThermometerViatom(this, device, gatt);
                     break;
 
-
-
-
-
-*/
                 default:
                     if (device.getName().contains(BLE_OMRON_BP1) || device.getName().contains(BLE_OMRON_BP2) ||
                             device.getName().contains(BLE_OMRON_BP3) || device.getName().contains(BLE_OMRON_BP4)) {
+                        Log.d(TAG, "onConnectedSuccess: BLE_OMRON_BP");
                         //omronBP = new OmronBP(bluetoothConnectionFragment, mContext, deviceName);
                        // omronBP.onConnectedSuccess(device, gatt);
                     } else if(device.getName().startsWith(BLE_GLUCOMETER_CARESENS_S)){
@@ -483,21 +474,13 @@ public class BluetoothConnection {
                     } else if (device.getName().contains(BLE_GLUCOMETER_CONTOUR)) {
                         ContourGlucometer contourGlucometer = new ContourGlucometer(this);
                         contourGlucometer.onConnectedSuccess(device, gatt);
+                    }else if (device.getName().contains(BLE_RING_VIATOM)) {
+                        new O2RingViatom(this, device, gatt);
                     }
-
-
                     /*else if (device.getName().contains(BLE_PRIZMA)) {
                         new PrizmaDevice(this).onConnectedSuccess( device);
-                    } else if (device.getName().contains(BLE_GLUCOMETER_CONTOUR)) {
-                        ContourGlucometer contourGlucometer = new ContourGlucometer(bluetoothConnectionFragment, mContext, deviceName);
-                        contourGlucometer.onConnectedSuccess(device, gatt);
-                    }else if (device.getName().contains(BLE_RING_VIATOM)) {
-                        O2RingViatom o2RingViatom = new O2RingViatom(bluetoothConnectionFragment, mContext, deviceName);
-                        o2RingViatom.onConnectedSuccess(device, gatt);
                     }*/
             }
-        } else {
-            Log.d(TAG, "onConnectedSuccess: null value");
         }
     }
 
@@ -526,7 +509,7 @@ public class BluetoothConnection {
         }
 
         /*if (bleDevice.getName().startsWith(BLE_PRIZMA)) {
-           // bluetoothConnectionFragment.forceFinishActivity();
+              bluetoothConnectionFragment.forceFinishActivity();
         }*/
     }
 
@@ -571,15 +554,7 @@ public class BluetoothConnection {
             ad_scale_uc_352BLE.onDestroy();
         }
 
-        /*   if (handler != null && runnable != null) {
-            handler.removeCallbacks(runnable);
-        }
-
-        if (ad_bp_ua_651BLE != null) {
-            ad_bp_ua_651BLE.onDestroy();
-        }
-
-        if (omronBP != null) {
+        /*if (omronBP != null) {
             omronBP.onDestroy();
         }
 
@@ -589,10 +564,8 @@ public class BluetoothConnection {
 
         if (vivaLNKECGBackground != null) {
             vivaLNKECGBackground.onDestroy();
-        }
+        }*/
 
-
-*/
     }
 
     private int pinDevice = 0;
@@ -608,7 +581,7 @@ public class BluetoothConnection {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
 
-            if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+            if (action != null && action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
                 final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
 
                 switch(state){
