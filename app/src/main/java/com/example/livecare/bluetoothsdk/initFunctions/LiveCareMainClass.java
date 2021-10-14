@@ -5,18 +5,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.util.Log;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothConnection;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothDataResult;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.ScaleViatom;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.data.BleDevice;
 import java.util.Map;
+import java.util.Objects;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_SMG4;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_VIATOM;
 
 public class LiveCareMainClass {
-    private String TAG = "LiveCareMainClass";
     private Application application;
     private BluetoothConnection bluetoothConnection;
     private ScaleViatom scaleViatom;
@@ -26,13 +25,11 @@ public class LiveCareMainClass {
         return LiveCareHolder.liveCareMainClass;
     }
 
-
     private static class LiveCareHolder {
         private static final LiveCareMainClass liveCareMainClass = new LiveCareMainClass();
     }
 
     public void init(Application app, BluetoothDataResult bluetoothDataResult) {
-        Log.d(TAG, "init: ");
         application = app;
         this.bluetoothDataResult = bluetoothDataResult;
         IntentFilter filter = new IntentFilter();
@@ -50,14 +47,13 @@ public class LiveCareMainClass {
             String devicesOrigin = intent.getStringExtra("devicesOrigin");
             BleDevice bleDevice = intent.getExtras().getParcelable("bluetoothDevice");
 
-            switch (devicesOrigin) {
+            switch (Objects.requireNonNull(devicesOrigin)) {
                 case "2":
-                    bluetoothConnection.addDeviceFromScanning(intent.getExtras().getParcelable("bluetoothDevice"),
-                            intent.getStringExtra("devicesOrigin"),intent.getStringExtra("deviceName"));
+                    bluetoothConnection.addDeviceFromScanning(bleDevice, devicesOrigin,deviceName);
                     break;
 
                 case "3":
-                    if(bleDevice.getName()!= null){
+                    if(Objects.requireNonNull(bleDevice).getName()!= null){
                         if (bleDevice.getName().equals(BLE_SCALE_VIATOM) || bleDevice.getName().equals(BLE_SCALE_SMG4)) {
                             scaleViatom = new ScaleViatom(LiveCareMainClass.this,  bleDevice);
                             break;

@@ -50,12 +50,12 @@ public class FitnessTrackerLintelek {
                     BleManager.getInstance().disconnect(bleDevice);
                 }
 
-                teleHealthScanBackgroundPresenter.watchConnected();
+               // teleHealthScanBackgroundPresenter.watchConnected();
             }
 
             @Override
             public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status, int disconnectFlag) {
-                teleHealthScanBackgroundPresenter.watchDisConnected();
+                //teleHealthScanBackgroundPresenter.watchDisConnected();
                 Constants.currentTimeForLastTelehealthServiceFitnessTracker = Calendar.getInstance().getTime().getTime();
                 if(mHandler!=null){
                     mHandler.removeCallbacksAndMessages(null);

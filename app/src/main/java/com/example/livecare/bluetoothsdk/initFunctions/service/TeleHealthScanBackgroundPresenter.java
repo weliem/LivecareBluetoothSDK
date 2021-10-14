@@ -8,6 +8,8 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.emergency_button.VAlertDevice;
 import com.example.livecare.bluetoothsdk.initFunctions.enums.BleDevicesName;
 import com.example.livecare.bluetoothsdk.initFunctions.enums.TypeBleDevices;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
@@ -98,7 +100,7 @@ public class TeleHealthScanBackgroundPresenter {
     private Handler handler;
     private boolean startScan;
     private BleDevice mDevice;
-    //private VAlertDevice vAlertDevice;
+    private VAlertDevice vAlertDevice;
     private final BroadcastReceiver teleHealthScanBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -406,10 +408,7 @@ public class TeleHealthScanBackgroundPresenter {
                         // decisionFunctionAfterGettingBTMac(BleDevicesName.Temp.toString(), device, otherDevices);
                     } else if (device.getName().contains(BLE_V_ALERT)) {
                         if (!BleManager.getInstance().isConnected(device) && teleHealthService != null) {
-                            BleManager.getInstance().cancelScan();
-                            startScan = false;
-                            //vAlertDevice = new VAlertDevice(teleHealthService, this);
-                            //vAlertDevice.connect(device);
+                            decisionFunctionAfterGettingBTMac(BleDevicesName.V_ALERT.toString(), device, otherDevices);
                         }
                     } else if (device.getName().contains(BLE_SPIROMETER_SMART_ONE)) {
                         teleHealthService.broadcastBluetoothFragment("display_spirometer","true");
@@ -461,33 +460,16 @@ public class TeleHealthScanBackgroundPresenter {
         }
     }
 
-    public void watchConnected() {
-        startScan = true;
-        startScan();
-        broadcastMainBaseActivity();
-        //Constants.DISPLAY_WATCH_ICON = true;
-    }
-
-    public void watchDisConnected() {
-        //Constants.DISPLAY_WATCH_ICON = false;
-        broadcastMainBaseActivity();
-    }
-
     public void resumeScan() {
         startScan = true;
         startScan();
     }
 
-    private void broadcastMainBaseActivity() {
-        if (teleHealthService != null) {
-            Intent local = new Intent();
-            local.setAction("broadcast.watchReceiver");
-            local.putExtra("main_base_activity", "show_watch");
-            teleHealthService.sendBroadcast(local);
-        }
-    }
-
     private void decisionFunctionAfterGettingBTMac(String deviceName, BleDevice device, String iHealthOrOtherDevice) {
+        if (vAlertDevice != null) {
+            vAlertDevice.disconnect();
+            vAlertDevice = null;
+        }
         if (teleHealthService != null) {
             teleHealthService.setDeviceFound(deviceName, device, iHealthOrOtherDevice);
         }

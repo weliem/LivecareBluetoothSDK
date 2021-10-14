@@ -22,6 +22,7 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.TranstekBP;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.WellueBP;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.ecg.ECGCardiBeat;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.emergency_button.VAlertDevice;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.AccuCheckGlucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.AgaMetrixGlucometer;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.glucometer.CareSensGlucometer;
@@ -122,6 +123,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_TEMP_VICKS;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_FORA_IR20;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_UNAAN;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_V_ALERT;
 
 public class BluetoothConnection {
     private String TAG = "BluetoothConnection";
@@ -427,6 +429,11 @@ public class BluetoothConnection {
                 case BLE_PULSE_OXIMETER_TAI_DOC:
                     new TaiDocSpo2(this, device, gatt);
                     break;
+
+                case BLE_V_ALERT:
+                    new VAlertDevice(this, device, gatt);
+                    break;
+
                /*
                 case BLE_THERMOMETER_VIATOM:
                     ThermometerViatom thermometerViatom = new ThermometerViatom(bluetoothConnectionFragment, mContext, deviceName);
