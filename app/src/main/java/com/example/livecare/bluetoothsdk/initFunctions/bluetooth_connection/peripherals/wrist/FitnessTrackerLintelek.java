@@ -5,68 +5,31 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.os.Handler;
 import android.os.Looper;
-import com.example.livecare.bluetoothsdk.initFunctions.service.TeleHealthScanBackgroundPresenter;
-import com.example.livecare.bluetoothsdk.initFunctions.service.TeleHealthService;
-import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothConnection;
+import com.example.livecare.bluetoothsdk.initFunctions.enums.TypeBleDevices;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
-import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.callback.BleGattCallback;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.callback.BleNotifyCallback;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.callback.BleWriteCallback;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.data.BleDevice;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.exception.BleException;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.utils.HexUtil;
 import java.math.BigInteger;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 public class FitnessTrackerLintelek {
-
     private BleDevice bleDevice;
-    private final TeleHealthScanBackgroundPresenter teleHealthScanBackgroundPresenter;
-
+    private final BluetoothConnection bluetoothConnection;
     private BluetoothGattCharacteristic characteristicWrite;
     private Handler mHandler;
 
-    public FitnessTrackerLintelek(TeleHealthService mContext, TeleHealthScanBackgroundPresenter teleHealthScanBackgroundPresenter) {
-        this.teleHealthScanBackgroundPresenter = teleHealthScanBackgroundPresenter;
-    }
-
-    public void connect(final BleDevice bleDevice) {
-        BleManager.getInstance().connect(bleDevice, new BleGattCallback() {
-            @Override
-            public void onStartConnect() {}
-
-            @Override
-            public void onConnectFail(BleDevice bleDevice, BleException exception) {
-                teleHealthScanBackgroundPresenter.resumeScan();
-            }
-
-            @Override
-            public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
-                if(gatt != null){
-                    onConnectedSuccess(bleDevice,gatt);
-                }else {
-                    BleManager.getInstance().disconnect(bleDevice);
-                }
-
-               // teleHealthScanBackgroundPresenter.watchConnected();
-            }
-
-            @Override
-            public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status, int disconnectFlag) {
-                //teleHealthScanBackgroundPresenter.watchDisConnected();
-                Constants.currentTimeForLastTelehealthServiceFitnessTracker = Calendar.getInstance().getTime().getTime();
-                if(mHandler!=null){
-                    mHandler.removeCallbacksAndMessages(null);
-                }
-            }
-        });
-    }
-
-
-    public void onConnectedSuccess(BleDevice device, BluetoothGatt gatt) {
+    public FitnessTrackerLintelek(BluetoothConnection bluetoothConnection, BleDevice device, BluetoothGatt gatt) {
+        this.bluetoothConnection = bluetoothConnection;
         bleDevice = device;
+        onConnectedSuccess(gatt);
+    }
+
+    public void onConnectedSuccess(BluetoothGatt gatt) {
         for (BluetoothGattService service : gatt.getServices()) {
             for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
                 if (characteristic.getUuid().toString().contains("00000af7")) {
@@ -88,7 +51,7 @@ public class FitnessTrackerLintelek {
 
                     @Override
                     public void onNotifySuccess() {
-                        startWriteCommand(characteristicWrite,"02a0");
+                        startWriteCommand(characteristicWrite);
                     }
 
                     @Override
@@ -98,7 +61,7 @@ public class FitnessTrackerLintelek {
                     public void onCharacteristicChanged(byte[] data) {
                         String formatHexString = HexUtil.formatHexString(data);
                         mHandler = new Handler(Looper.getMainLooper());
-                        mHandler.postDelayed(() -> startWriteCommand(characteristicWrite,"02a0"), 10000);
+                        mHandler.postDelayed(() -> startWriteCommand(characteristicWrite), 10000);
 
                         if(formatHexString.startsWith("02a0")){
                             calculateResult(formatHexString);
@@ -117,17 +80,17 @@ public class FitnessTrackerLintelek {
             objectMap.put("steps", steps);
             objectMap.put("kCal", kCal);
             objectMap.put("hr", hr);
-            //bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Fitness.stringValue);
+            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Fitness.stringValue);
             BleManager.getInstance().disconnect(bleDevice);
         }
     }
 
-    private void startWriteCommand(BluetoothGattCharacteristic characteristic , String command) {
+    private void startWriteCommand(BluetoothGattCharacteristic characteristic) {
         BleManager.getInstance().write(
                 bleDevice,
                 characteristic.getService().getUuid().toString(),
                 characteristic.getUuid().toString(),
-                HexUtil.hexStringToBytes(command),
+                HexUtil.hexStringToBytes("02a0"),
                 new BleWriteCallback() {
                     @Override
                     public void onWriteSuccess(final int current, final int total, final byte[] justWrite) {}

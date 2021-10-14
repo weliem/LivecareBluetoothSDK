@@ -35,6 +35,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_CARDIOBEAT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_ECG_IHEALTH;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_ECG_VIVALNK;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_FITNESS_TRACKER;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_ACCU_CHECK;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_AGAMETRIX_CVS;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_AGAMETRIX_UnPaired;
@@ -447,6 +448,8 @@ public class TeleHealthScanBackgroundPresenter {
                         }
                     } else if (device.getName() != null && device.getName().contains(BLE_RING_VIATOM)) {
                         decisionFunctionAfterGettingBTMac(BleDevicesName.SpO2.toString(), device, otherDevices);
+                    } else if (device.getName() != null && device.getName().contains(BLE_FITNESS_TRACKER)) {
+                        decisionFunctionAfterGettingBTMac(BleDevicesName.Fitness.toString(), device, otherDevices);
                     }
             }
         } else {

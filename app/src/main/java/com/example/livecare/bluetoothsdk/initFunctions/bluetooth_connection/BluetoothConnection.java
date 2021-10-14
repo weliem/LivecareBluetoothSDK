@@ -59,6 +59,7 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerUnaan;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerViatom;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.VicksTemp;
+import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.wrist.FitnessTrackerLintelek;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
@@ -80,6 +81,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_INDIE_HEALTH;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BlOOD_PRESSURE_TNG_FORA;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_CARDIOBEAT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_FITNESS_TRACKER;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_ACCU_CHECK;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_AGAMETRIX_CVS;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_GLUCOMETER_AGAMETRIX_UnPaired;
@@ -476,7 +478,10 @@ public class BluetoothConnection {
                         contourGlucometer.onConnectedSuccess(device, gatt);
                     }else if (device.getName().contains(BLE_RING_VIATOM)) {
                         new O2RingViatom(this, device, gatt);
+                    }else if (device.getName().contains(BLE_FITNESS_TRACKER)) {
+                        new FitnessTrackerLintelek(this, device, gatt);
                     }
+
                     /*else if (device.getName().contains(BLE_PRIZMA)) {
                         new PrizmaDevice(this).onConnectedSuccess( device);
                     }*/
