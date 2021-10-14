@@ -3,7 +3,6 @@ package com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.per
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothConnection;
@@ -150,12 +149,10 @@ public class CareSense_S_Glucometer {
 
     private void calculateResults(String formatHexString) {
         if(formatHexString.startsWith("0208", 24) || formatHexString.startsWith("FE07", 24)){
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                BleManager.getInstance().disconnect(bleDevice);
-            }, 3000);
+            new Handler(Looper.getMainLooper()).postDelayed(() -> BleManager.getInstance().disconnect(bleDevice), 3000);
 
         }else {
-            String result = "";
+            String result;
             final String result1 = new BigInteger(formatHexString.substring(24, 26), 16).toString();
             if (formatHexString.startsWith("b0", 26)) {
                 result = result1;
@@ -163,8 +160,6 @@ public class CareSense_S_Glucometer {
                 int resultAbove255 = Integer.parseInt(result1) + 256;
                 result = String.valueOf(resultAbove255);
             }
-
-            String hexDateTime = new BigInteger(formatHexString.substring(0, 14), 16).toString();
 
             Map<String, Object> dataValue = new HashMap<>();
             dataValue.put("bgValue", result);

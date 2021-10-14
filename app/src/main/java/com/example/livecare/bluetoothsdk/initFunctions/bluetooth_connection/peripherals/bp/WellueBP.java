@@ -21,7 +21,6 @@ import java.util.Map;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Utils.addZeroToHex;
 
 public class WellueBP {
-    private final String TAG = "WellueBP: ";
     private final BluetoothConnection bluetoothConnection;
     private BleDevice bleDevice;
     private BluetoothGattCharacteristic characteristicWrite;

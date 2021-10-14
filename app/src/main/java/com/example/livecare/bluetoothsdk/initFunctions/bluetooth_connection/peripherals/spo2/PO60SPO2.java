@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothConnection;
 import com.example.livecare.bluetoothsdk.initFunctions.enums.TypeBleDevices;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 public class PO60SPO2 {
-    private final String TAG = "PO60SPO2";
     private final BluetoothConnection bluetoothConnection;
     private BleDevice bleDevice;
     private BluetoothGattCharacteristic gattCharacteristicWrite;
@@ -54,7 +52,6 @@ public class PO60SPO2 {
             startNotify(gattCharacteristicNotify);
         } else {
             if (Utils.isNotOtherBleDeviceConnected()) {
-                Log.d(TAG, "onConnectedSuccess: enter pin");
                 bluetoothConnection.setPin(bleDevice.getDevice(), 2);
             } else {
                 Utils.teleHealthScanBroadcastReceiver(true);
@@ -156,7 +153,7 @@ public class PO60SPO2 {
     private List<String> splitEqually(String text) {
         // Give the list the right capacity to start with. You could use an array
         // instead if you wanted.
-        List<String> ret = new ArrayList<String>((text.length() + 48 - 1) / 48);
+        List<String> ret = new ArrayList<>((text.length() + 48 - 1) / 48);
 
         for (int start = 0; start < text.length(); start += 48) {
             ret.add(text.substring(start, Math.min(text.length(), start + 48)));

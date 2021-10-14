@@ -3,7 +3,6 @@ package com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.per
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothConnection;
@@ -22,7 +21,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Utils.checkPairedDevices;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Utils.pair;
 
@@ -219,9 +217,7 @@ public class CareSensGlucometer {
     private void calculateResults(String formatHexString) {
         if (formatHexString.length() > 27) {
             if (formatHexString.startsWith("0208", 24) || formatHexString.startsWith("FE07", 24)) {
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    BleManager.getInstance().disconnect(bleDevice);
-                }, 3000);
+                new Handler(Looper.getMainLooper()).postDelayed(() -> BleManager.getInstance().disconnect(bleDevice), 3000);
 
             } else {
                 String result;

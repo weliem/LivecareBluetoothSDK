@@ -3,7 +3,6 @@ package com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.per
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
-import android.content.Context;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothConnection;
 import com.example.livecare.bluetoothsdk.initFunctions.enums.TypeBleDevices;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
@@ -17,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BP3MW1 {
-    private final String TAG = "BP3MW1";
     private final BluetoothConnection bluetoothConnection;
     private BleDevice bleDevice;
     private BluetoothGattCharacteristic characteristicWrite;

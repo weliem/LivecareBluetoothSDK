@@ -3,9 +3,6 @@ package com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.per
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
-import android.content.Context;
-import android.widget.Toast;
-
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothConnection;
 import com.example.livecare.bluetoothsdk.initFunctions.enums.TypeBleDevices;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
@@ -16,22 +13,14 @@ import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.callback.BleWriteC
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.data.BleDevice;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.exception.BleException;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.utils.HexUtil;
-
-import java.io.Serializable;
-import java.math.BigInteger;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Utils.checkPairedDevices;
 
 public class TrueMetrixAirGlucometer {
-    private final String TAG = "TrueMetrixAirGlucometer";
     private final BluetoothConnection bluetoothConnection;
     private BleDevice bleDevice;
     private String result;
-    private String dataHex = "";
-    private String hexDateTime = "";
     private BluetoothGattCharacteristic characteristicRACP;
     private BluetoothGattCharacteristic characteristicMeasurement;
     private BluetoothGattCharacteristic characteristicCustom;
@@ -94,9 +83,6 @@ public class TrueMetrixAirGlucometer {
                             float x = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_SFLOAT, 10);
                             int intResult = Math.round(x * 100000);
                             result = String.valueOf(intResult);
-
-                            dataHex = HexUtil.formatHexString(data);
-                            hexDateTime = new BigInteger(HexUtil.formatHexString(data).substring(0, 14), 16).toString();
                         }
                     }
                 });

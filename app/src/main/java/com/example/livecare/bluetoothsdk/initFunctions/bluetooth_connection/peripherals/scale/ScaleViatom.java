@@ -15,6 +15,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_VIATOM;
 
 public class ScaleViatom {
@@ -60,9 +62,9 @@ public class ScaleViatom {
 
                     String value;
                     if(bleDevice.getName().equals(BLE_SCALE_VIATOM)){
-                         value = getByteString(result.getScanRecord().getBytes());
+                         value = getByteString(Objects.requireNonNull(result.getScanRecord()).getBytes());
                     }else {
-                        value = getByteStringSMG4(result.getScanRecord().getBytes());
+                        value = getByteStringSMG4(Objects.requireNonNull(result.getScanRecord()).getBytes());
                     }
 
                     if(!value.substring(4,12).equals("00000000")){
