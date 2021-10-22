@@ -10,6 +10,10 @@ import android.os.Bundle;
 import android.util.Log;
 import com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothDataResult;
+import com.example.livecare.bluetoothsdk.initFunctions.data.local.DBManager;
+import com.example.livecare.bluetoothsdk.initFunctions.data.model.DataResultModel;
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,6 +28,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkAndRequestForPermission();
+
+        DBManager dbManager = new DBManager(this);
+        dbManager.open();
+        Log.d(TAG, "sendDataResult fetch: "+new Gson().toJson(dbManager.dataResultModel(2L)));
     }
 
     public void checkAndRequestForPermission() {

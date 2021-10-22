@@ -60,6 +60,9 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerViatom;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.VicksTemp;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.wrist.FitnessTrackerLintelek;
+import com.example.livecare.bluetoothsdk.initFunctions.data.local.DBManager;
+import com.example.livecare.bluetoothsdk.initFunctions.data.local.DatabaseHelper;
+import com.example.livecare.bluetoothsdk.initFunctions.data.local.DbHelper;
 import com.example.livecare.bluetoothsdk.initFunctions.data.model.DataResultModel;
 import com.example.livecare.bluetoothsdk.initFunctions.data.network.APIClient;
 import com.example.livecare.bluetoothsdk.initFunctions.data.local.PrefManager;
@@ -141,6 +144,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_VIATOM;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_V_ALERT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.auth_token;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.telehealth_ble_id;
 
 public class BluetoothConnection {
     private String TAG = "BluetoothConnection";
@@ -539,7 +543,17 @@ public class BluetoothConnection {
 
     private void sendDataResult(Map<String, Object> data, String deviceType, String mac, String deviceName, long createdAt){
         DataResultModel dataResultModel = new DataResultModel(data, deviceType, mac, deviceName, createdAt);
+
+        DBManager dbManager = new DBManager(app);
+        dbManager.open();
+        dbManager.insert(dataResultModel);
+
+       // Log.d(TAG, "sendDataResult fetch: "+dbManager.dataResultModel(dataResultModel.getId()));
+       // new DbHelper(app).insertResult(dataResultModel);
         Log.d(TAG, "sendDataResult: "+ new Gson().toJson(dataResultModel));
+        Log.d(TAG, "sendDataResult fetch: "+ dbManager.dataResultModel(dataResultModel.getId()));
+       // Log.d(TAG, "sendDataResult fetch: "+ dbManager.fetch().getString(dbManager.fetch().getColumnIndex(DatabaseHelper.COLUMN_BT_MAC)));
+
 
         Call<Object> call = APIClient.getData().sendDataResult(PrefManager.getStringValue(auth_token),"");
         call.enqueue(new Callback<Object>() {
@@ -547,6 +561,7 @@ public class BluetoothConnection {
             public void onResponse(Call<Object> call, Response<Object> response) {
                 if(response.isSuccessful()){
                     //delete local
+
                 }else {
 
                 }

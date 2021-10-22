@@ -3,6 +3,7 @@ package com.example.livecare.bluetoothsdk;
 import android.app.Application;
 import android.content.Context;
 
+import com.example.livecare.bluetoothsdk.initFunctions.data.local.DbHelper;
 import com.example.livecare.bluetoothsdk.initFunctions.data.local.PrefManager;
 
 public class MyApplication extends Application {
