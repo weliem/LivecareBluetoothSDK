@@ -556,6 +556,7 @@ public class BluetoothConnection {
                     dbManager.delete();
                 }
                 //if response specific code close the gates!!!
+                // PrefManager.setStringValue(auth_token,"");
             }
 
             @Override

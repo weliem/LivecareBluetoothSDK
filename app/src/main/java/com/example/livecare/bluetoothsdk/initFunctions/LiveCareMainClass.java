@@ -5,6 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+
+import androidx.annotation.NonNull;
+
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothConnection;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothDataResult;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.ScaleViatom;
@@ -54,10 +57,10 @@ public class LiveCareMainClass {
         Call<Object> call = APIClient.getData().authenticateUser("","");
         call.enqueue(new Callback<Object>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
+            public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
                 if(response.isSuccessful()){
                     bluetoothDataResult.authenticationOnSuccess();
-                    PrefManager.setStringValue(auth_token,"");
+                    PrefManager.setStringValue(auth_token,"value");
                     Utils.startTeleHealthService();
                 }else {
                     bluetoothDataResult.authenticationOnFailure(response.message());
@@ -65,7 +68,7 @@ public class LiveCareMainClass {
             }
 
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(@NonNull Call<Object> call, @NonNull Throwable t) {
                 bluetoothDataResult.authenticationOnFailure(t.getMessage());
             }
         });
