@@ -119,7 +119,7 @@ public class ForaBPTNG {
             objectMap.put("ahr", "");
             String clearMemoryCommand = "515201000000a3";
             startWriteCommand(characteristic, Utils.checkSum(clearMemoryCommand));
-            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.BP.stringValue);
+            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.BP.stringValue, bleDevice.getMac(), bleDevice.getName());
         } else if (value.startsWith("5154")) {
             startWriteCommand(characteristic, setDateTimeCommand());
         }

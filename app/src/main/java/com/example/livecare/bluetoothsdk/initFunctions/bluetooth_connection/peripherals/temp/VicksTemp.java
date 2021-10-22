@@ -66,14 +66,14 @@ public class VicksTemp {
             float f = Float.intBitsToFloat(numBitsReversed);
             if(f<30) {
                 objectMap.put("error", "Error value");
-                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Temp.stringValue);
+                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Temp.stringValue, bleDevice.getMac(), bleDevice.getName());
                 return;
             }
             if(f > 30 && f < 50){
                 f = 32 + (f * 9 / 5);
             }
             objectMap.put("temperature", f);
-            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Temp.stringValue);
+            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Temp.stringValue, bleDevice.getMac(), bleDevice.getName());
         }
     }
 

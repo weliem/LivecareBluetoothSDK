@@ -84,11 +84,11 @@ public class VAlertDevice {
                         if(HexUtil.formatHexString(data).equals("03")){
                             startWriteLongPressCommand(characteristicWrite3,"01");
                             dataMap.put("help_request", true);
-                            bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.V_ALERT.stringValue);
+                            bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.V_ALERT.stringValue, bleDevice.getMac(), bleDevice.getName());
                         }
                         if(HexUtil.formatHexString(data).equals("04")){
                             dataMap.put("fall_detection", true);
-                            bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.V_ALERT.stringValue);
+                            bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.V_ALERT.stringValue, bleDevice.getMac(), bleDevice.getName());
                         }
 
                     }

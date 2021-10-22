@@ -116,7 +116,7 @@ public class ForaThermometer {
             Map<String, Object> objectMap = new HashMap<>();
             objectMap.put("temperature", fahrenheit);
             objectMap.put("location", "Ear");
-            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Temp.stringValue);
+            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Temp.stringValue, bleDevice.getMac(), bleDevice.getName());
             startWriteCommand(characteristic, Utils.checkSum("515200000000a3"));
         }
     }

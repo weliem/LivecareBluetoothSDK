@@ -169,7 +169,7 @@ public class PO60SPO2 {
         data.put("oxygen", oxygen);
         data.put("pulse", pulseRate);
         data.put("pi", null);
-        bluetoothConnection.onDataReceived(data, TypeBleDevices.SpO2.stringValue);
+        bluetoothConnection.onDataReceived(data, TypeBleDevices.SpO2.stringValue, bleDevice.getMac(), bleDevice.getName());
         BleManager.getInstance().disconnect(bleDevice);
     }
 

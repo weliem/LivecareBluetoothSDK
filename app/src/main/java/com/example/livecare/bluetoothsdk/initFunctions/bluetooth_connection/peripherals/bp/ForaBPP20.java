@@ -115,7 +115,7 @@ public class ForaBPP20 {
             objectMap.put("dia", resultDia);
             objectMap.put("pulse", resultPulse);
             objectMap.put("ahr", "");
-            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.BP.stringValue);
+            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.BP.stringValue, bleDevice.getMac(), bleDevice.getName());
             nextIteration(characteristic);
 
         } else if (value.startsWith("5154")) {

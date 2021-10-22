@@ -74,7 +74,7 @@ public class ScaleArboleaf {
                 startWriteCommand(characteristicWriteffe3, "1f05151049");
                 Map<String, Object> objectMap = new HashMap<>();
                 objectMap.put("weight", weightLbs / 100);
-                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.WS.stringValue);
+                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.WS.stringValue, bleDevice.getMac(), bleDevice.getName());
             }
         }
     }

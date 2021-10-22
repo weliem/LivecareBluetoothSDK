@@ -149,7 +149,7 @@ public class TrueMetrixAirGlucometer {
 
     private void calculateResults() {
         Map<String, Object> dataValue = new HashMap<>();
-        dataValue.put("bgValue", result);   bluetoothConnection.onDataReceived(dataValue, TypeBleDevices.Gl.stringValue);
+        dataValue.put("bgValue", result);   bluetoothConnection.onDataReceived(dataValue, TypeBleDevices.Gl.stringValue, bleDevice.getMac(), bleDevice.getName());
         startWriteCommand(characteristicRACP, "0201");
         BleManager.getInstance().disconnect(bleDevice);
     }

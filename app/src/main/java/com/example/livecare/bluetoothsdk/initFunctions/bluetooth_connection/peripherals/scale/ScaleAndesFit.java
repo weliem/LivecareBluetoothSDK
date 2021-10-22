@@ -72,7 +72,7 @@ public class ScaleAndesFit {
     private void updateScaleResultToFireBase(String weight) {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("weight", weight);
-        bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.WS.stringValue);
+        bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.WS.stringValue, bleDevice.getMac(), bleDevice.getName());
         BleManager.getInstance().disconnect(bleDevice);
     }
 

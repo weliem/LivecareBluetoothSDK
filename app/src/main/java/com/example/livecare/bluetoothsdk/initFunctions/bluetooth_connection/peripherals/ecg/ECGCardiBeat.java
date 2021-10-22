@@ -65,7 +65,7 @@ public class ECGCardiBeat {
     private void updateECGToFireBase(StringBuilder ecg) {
         Map<String, Object> dataValue = new HashMap<>();
         dataValue.put("ecg", ecg);
-        bluetoothConnection.onDataReceived(dataValue, TypeBleDevices.ECG.stringValue);
+        bluetoothConnection.onDataReceived(dataValue, TypeBleDevices.ECG.stringValue, bleDevice.getMac(), bleDevice.getName());
         BleManager.getInstance().disconnect(bleDevice);
     }
 

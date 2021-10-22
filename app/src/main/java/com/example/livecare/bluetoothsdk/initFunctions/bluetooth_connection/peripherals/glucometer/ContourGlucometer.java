@@ -51,7 +51,7 @@ public class ContourGlucometer {
             startNotify(characteristicMeasurement);
         } else {
             dataValue.put("error", "Error: Please pair the Glucometer");
-            bluetoothConnection.onDataReceived(dataValue, TypeBleDevices.Gl.stringValue);
+            bluetoothConnection.onDataReceived(dataValue, TypeBleDevices.Gl.stringValue, bleDevice.getMac(), bleDevice.getName());
             BleManager.getInstance().disconnect(bleDevice);
         }
     }
@@ -127,7 +127,7 @@ public class ContourGlucometer {
 
     private void calculateResults() {
         dataValue.put("bgValue", result);
-        bluetoothConnection.onDataReceived(dataValue, TypeBleDevices.Gl.stringValue);
+        bluetoothConnection.onDataReceived(dataValue, TypeBleDevices.Gl.stringValue, bleDevice.getMac(), bleDevice.getName());
         BleManager.getInstance().disconnect(bleDevice);
     }
 }

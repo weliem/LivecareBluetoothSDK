@@ -152,7 +152,7 @@ public class IndieGlucometer {
         String result = new BigInteger(formatHexString.substring(26, 30), 16).toString();
         Map<String, Object> dataValue = new HashMap<>();
         dataValue.put("bgValue", result);
-        bluetoothConnection.onDataReceived(dataValue, TypeBleDevices.Gl.stringValue);
+        bluetoothConnection.onDataReceived(dataValue, TypeBleDevices.Gl.stringValue, bleDevice.getMac(), bleDevice.getName());
     }
 
     private String setDateTimeCommand() {

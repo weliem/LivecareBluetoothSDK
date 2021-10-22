@@ -99,7 +99,7 @@ public class BP3MW1 {
                 dataMap.put("pulse", pul);
                 dataMap.put("ahr", "");
 
-                bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.BP.stringValue);
+                bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.BP.stringValue, bleDevice.getMac(), bleDevice.getName());
                 BleManager.getInstance().disconnect(bleDevice);
             }
         }

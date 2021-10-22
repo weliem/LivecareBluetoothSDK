@@ -1,5 +1,6 @@
 package com.example.livecare.bluetoothsdk;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -10,6 +11,8 @@ import android.util.Log;
 import com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothDataResult;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +39,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void initProcess() {
         LiveCareMainClass.getInstance().init(getApplication(),new BluetoothDataResult() {
+            @Override
+            public void authenticationOnSuccess() {
+                Log.d(TAG, "authenticationOnSuccess");
+            }
+
+            @Override
+            public void authenticationOnFailure(String message) {
+                Log.d(TAG, "authenticationOnFailure: "+message);
+            }
+
             @Override
             public void onStartConnect(String deviceName) {
                 Log.d(TAG, "onStartConnect: "+deviceName);
@@ -76,9 +89,6 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case "ECG":
                         Log.d(TAG, "onDataReceived ECG: "+data.toString());
-                        break;
-                    case "PRIZMA":
-                        Log.d(TAG, "onDataReceived PRIZMA: "+data.toString());
                         break;
                     case "V_ALERT":
                         Log.d(TAG, "onDataReceived V_ALERT: "+data.toString());

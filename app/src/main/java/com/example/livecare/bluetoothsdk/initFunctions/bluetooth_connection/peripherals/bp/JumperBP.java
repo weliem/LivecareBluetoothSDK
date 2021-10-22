@@ -85,7 +85,7 @@ public class JumperBP {
         dataMap.put("dia", dia);
         dataMap.put("pulse", pul);
         dataMap.put("ahr", "");
-        bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.BP.stringValue);
+        bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.BP.stringValue, bleDevice.getMac(), bleDevice.getName());
         startWrite(characteristicWrite);
         BleManager.getInstance().disconnect(bleDevice);
     }

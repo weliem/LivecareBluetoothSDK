@@ -3,6 +3,8 @@ package com.example.livecare.bluetoothsdk;
 import android.app.Application;
 import android.content.Context;
 
+import com.example.livecare.bluetoothsdk.initFunctions.data.local.PrefManager;
+
 public class MyApplication extends Application {
     private static MyApplication instance;
 
@@ -17,6 +19,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        PrefManager.initSharedPref(this);
         instance = this;
     }
 }

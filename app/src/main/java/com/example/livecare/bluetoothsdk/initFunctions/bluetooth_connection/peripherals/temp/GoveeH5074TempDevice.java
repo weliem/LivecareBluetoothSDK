@@ -169,7 +169,7 @@ public class GoveeH5074TempDevice {
                             objectMap.put("humidityIn", humidityIn);
                             objectMap.put("tempOut", fahrenheitOut);
                             objectMap.put("humidityOut", humidityOut);
-                            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Temp.stringValue);
+                            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Temp.stringValue, bleDevice.getMac(), bleDevice.getName());
                             BleManager.getInstance().disconnect(bleDevice);
                         }
                     }

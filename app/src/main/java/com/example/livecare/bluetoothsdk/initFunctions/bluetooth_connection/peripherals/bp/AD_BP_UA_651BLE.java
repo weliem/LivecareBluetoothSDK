@@ -72,10 +72,10 @@ public class AD_BP_UA_651BLE {
             dataMap.put("dia", dia);
             dataMap.put("pulse", pul);
             dataMap.put("ahr", "");
-            bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.BP.stringValue);
+            bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.BP.stringValue, bleDevice.getMac(), bleDevice.getName());
         } else {
             dataMap.put("error", "error");
-            bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.BP.stringValue);
+            bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.BP.stringValue, bleDevice.getMac(), bleDevice.getName());
         }
     }
 

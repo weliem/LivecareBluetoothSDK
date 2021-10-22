@@ -69,7 +69,7 @@ public class NoninSpO2 {
                 objectMap.put("oxygen", oxygen);
                 objectMap.put("pulse", pulseRate);
                 objectMap.put("pi", null);
-                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.SpO2.stringValue);
+                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.SpO2.stringValue, bleDevice.getMac(), bleDevice.getName());
                 BleManager.getInstance().disconnect(bleDevice);
             }
         }

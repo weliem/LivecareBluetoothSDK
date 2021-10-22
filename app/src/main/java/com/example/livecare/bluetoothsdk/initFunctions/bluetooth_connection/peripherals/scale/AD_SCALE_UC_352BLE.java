@@ -68,18 +68,18 @@ public class AD_SCALE_UC_352BLE {
             if(value.substring(0, 2).equalsIgnoreCase("03")){
                 double weightLbs = weight * 0.1;
                 objectMap.put("weight", weightLbs);
-                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.WS.stringValue);
+                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.WS.stringValue, bleDevice.getMac(), bleDevice.getName());
             }else if(value.substring(0, 2).equalsIgnoreCase("02")){
                 float weightKg = (float) (weight * 0.220462);
                 objectMap.put("weight", weightKg);
-                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.WS.stringValue);
+                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.WS.stringValue, bleDevice.getMac(), bleDevice.getName());
             }else {
                 objectMap.put("error", "error");
-                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.BP.stringValue);
+                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.BP.stringValue, bleDevice.getMac(), bleDevice.getName());
             }
         } else {
             objectMap.put("error", "error");
-            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.BP.stringValue);
+            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.BP.stringValue, bleDevice.getMac(), bleDevice.getName());
         }
     }
 

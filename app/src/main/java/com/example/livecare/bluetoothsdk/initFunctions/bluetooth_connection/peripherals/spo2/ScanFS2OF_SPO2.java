@@ -75,7 +75,7 @@ public class ScanFS2OF_SPO2 {
                 data.put("pulse", pulseRate);
                 data.put("pi", String.valueOf(pi));
                 Log.d(TAG, "calculateResults on data received: "+formatHexString);
-                bluetoothConnection.onDataReceived(data, TypeBleDevices.SpO2.stringValue);
+                bluetoothConnection.onDataReceived(data, TypeBleDevices.SpO2.stringValue, bleDevice.getMac(), bleDevice.getName());
                 BleManager.getInstance().disconnect(bleDevice);
             }
         }

@@ -92,7 +92,7 @@ public class ThermometerAndesFit {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("temperature", temp);
         dataMap.put("location", position);
-        bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.Temp.stringValue);
+        bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.Temp.stringValue, bleDevice.getMac(), bleDevice.getName());
         BleManager.getInstance().disconnect(bleDevice);
     }
 }

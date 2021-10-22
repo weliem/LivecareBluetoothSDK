@@ -231,7 +231,7 @@ public class CareSensGlucometer {
 
                 Map<String, Object> dataValue = new HashMap<>();
                 dataValue.put("bgValue", result);
-                bluetoothConnection.onDataReceived(dataValue, TypeBleDevices.Gl.stringValue);
+                bluetoothConnection.onDataReceived(dataValue, TypeBleDevices.Gl.stringValue, bleDevice.getMac(), bleDevice.getName());
                 BleManager.getInstance().disconnect(bleDevice);
             }
         }

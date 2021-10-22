@@ -117,7 +117,7 @@ public class MasimoSpO2 {
             objectMap.put("pulseMin", pRMin);
             objectMap.put("pulseMax", pRMax);
             objectMap.put("pi", null);
-            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.SpO2.stringValue);
+            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.SpO2.stringValue, bleDevice.getMac(), bleDevice.getName());
             startWriteCommand(characteristicWrite, "77020715");
             i = 0;
         }

@@ -104,7 +104,7 @@ public class SpirometerAndesFit {
         dataMap.put("fev1", fev1Result);
         dataMap.put("pef", resultPEF);
 
-        bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.Spirometer.stringValue);
+        bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.Spirometer.stringValue, bleDevice.getMac(), bleDevice.getName());
         startWrite(characteristicWrite,"5503");
     }
 

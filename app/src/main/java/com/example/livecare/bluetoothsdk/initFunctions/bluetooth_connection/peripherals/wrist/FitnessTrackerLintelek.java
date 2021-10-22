@@ -80,7 +80,7 @@ public class FitnessTrackerLintelek {
             objectMap.put("steps", steps);
             objectMap.put("kCal", kCal);
             objectMap.put("hr", hr);
-            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Fitness.stringValue);
+            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Fitness.stringValue, bleDevice.getMac(), bleDevice.getName());
             BleManager.getInstance().disconnect(bleDevice);
         }
     }

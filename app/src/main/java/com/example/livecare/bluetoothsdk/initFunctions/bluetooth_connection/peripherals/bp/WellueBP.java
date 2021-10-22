@@ -81,11 +81,11 @@ public class WellueBP {
                 objectMap.put("dia", dia);
                 objectMap.put("pulse", pul);
                 objectMap.put("ahr", "");
-                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.BP.stringValue);
+                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.BP.stringValue, bleDevice.getMac(), bleDevice.getName());
 
             } else {
                 objectMap.put("error", "Error value");
-                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.BP.stringValue);
+                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.BP.stringValue, bleDevice.getMac(), bleDevice.getName());
             }
         }
 

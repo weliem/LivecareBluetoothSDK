@@ -89,4 +89,6 @@ public class Constants {
     public static final String BLE_TEMP_VICKS = "Vicks";
 
 
+    /////////////////pref Manager keys////////////
+    public static final String auth_token = "auth_token";
 }

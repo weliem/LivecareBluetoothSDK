@@ -99,7 +99,7 @@ public class TaiDocGlucometer {
                 objectMap.put("bgValue", result);
                 String clearMemory = "515200000000a3";
                 startWriteCommand(characteristic, checkSum(clearMemory));
-                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Gl.stringValue);
+                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Gl.stringValue, bleDevice.getMac(), bleDevice.getName());
             } else {
                 startWriteCommand(characteristic, checkSum(turnOffDevice));
                 new Handler(Looper.getMainLooper()).postDelayed(this::finishActivity, 2000);

@@ -67,7 +67,7 @@ public class ThermometerUnaan {
     private void updateTemperatureToFireBase(String temp) {
         Map<String, Object> objectMap = new HashMap<>();
         objectMap.put("temperature", temp);
-        bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Temp.stringValue);
+        bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Temp.stringValue, bleDevice.getMac(), bleDevice.getName());
         BleManager.getInstance().disconnect(bleDevice);
     }
 }

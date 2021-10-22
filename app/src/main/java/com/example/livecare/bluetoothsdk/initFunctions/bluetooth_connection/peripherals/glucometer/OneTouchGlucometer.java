@@ -88,7 +88,7 @@ public class OneTouchGlucometer {
     private void calculateResults(String resultToSend) {
         Map<String, Object> dataValue = new HashMap<>();
         dataValue.put("bgValue", resultToSend);
-        bluetoothConnection.onDataReceived(dataValue, TypeBleDevices.Gl.stringValue);
+        bluetoothConnection.onDataReceived(dataValue, TypeBleDevices.Gl.stringValue, bleDevice.getMac(), bleDevice.getName());
         BleManager.getInstance().disconnect(bleDevice);
     }
 

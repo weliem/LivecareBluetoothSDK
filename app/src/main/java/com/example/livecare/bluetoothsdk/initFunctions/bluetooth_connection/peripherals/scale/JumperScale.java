@@ -73,7 +73,7 @@ public class JumperScale {
         double sendResult = (Double.parseDouble(result) * 0.01);
         Map<String, Object> objectMap = new HashMap<>();
         objectMap.put("weight", sendResult);
-        bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.WS.stringValue);
+        bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.WS.stringValue, bleDevice.getMac(), bleDevice.getName());
         BleManager.getInstance().disconnect(bleDevice);
     }
 

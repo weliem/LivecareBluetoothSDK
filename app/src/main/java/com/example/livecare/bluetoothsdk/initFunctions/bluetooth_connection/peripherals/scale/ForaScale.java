@@ -128,7 +128,7 @@ public class ForaScale {
         Map<String, Object> objectMap = new HashMap<>();
         objectMap.put("weight", weightToSend);
 
-        bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.WS.stringValue);
+        bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.WS.stringValue,bleDevice.getName(),bleDevice.getMac());
         String clearMemoryCommand = "515201000000a3";
         startWriteCommand(characteristic, Utils.checkSum(clearMemoryCommand));
     }

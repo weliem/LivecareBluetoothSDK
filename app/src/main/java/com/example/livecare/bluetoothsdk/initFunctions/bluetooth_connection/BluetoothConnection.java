@@ -60,14 +60,25 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.ThermometerViatom;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.VicksTemp;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.wrist.FitnessTrackerLintelek;
+import com.example.livecare.bluetoothsdk.initFunctions.data.model.DataResultModel;
+import com.example.livecare.bluetoothsdk.initFunctions.data.network.APIClient;
+import com.example.livecare.bluetoothsdk.initFunctions.data.local.PrefManager;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.callback.BleGattCallback;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.data.BleDevice;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.exception.BleException;
+import com.google.gson.Gson;
+
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_AD_UA_651BLE;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BC57;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BM67;
@@ -129,6 +140,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_UNAAN;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_VIATOM;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_V_ALERT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.auth_token;
 
 public class BluetoothConnection {
     private String TAG = "BluetoothConnection";
@@ -518,10 +530,33 @@ public class BluetoothConnection {
         }*/
     }
 
-    public void onDataReceived(Map<String, Object> data, String deviceName) {
+    public void onDataReceived(Map<String, Object> data, String deviceType, String mac, String name) {
         if(liveCareMainClass != null){
-            bluetoothDataResult.onDataReceived(data, deviceName);
+            bluetoothDataResult.onDataReceived(data, deviceType);
+            sendDataResult(data,deviceType,mac,name,Calendar.getInstance().getTime().getTime());
         }
+    }
+
+    private void sendDataResult(Map<String, Object> data, String deviceType, String mac, String deviceName, long createdAt){
+        DataResultModel dataResultModel = new DataResultModel(data, deviceType, mac, deviceName, createdAt);
+        Log.d(TAG, "sendDataResult: "+ new Gson().toJson(dataResultModel));
+
+        Call<Object> call = APIClient.getData().sendDataResult(PrefManager.getStringValue(auth_token),"");
+        call.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                if(response.isSuccessful()){
+                    //delete local
+                }else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+
+            }
+        });
     }
 
     public void onDestroy() {

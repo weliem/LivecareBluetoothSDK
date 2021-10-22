@@ -111,7 +111,7 @@ public class ForaGlucometerTNG {
             Map<String, Object> objectMap = new HashMap<>();
             objectMap.put("bgValue", result);
             startWriteCommand(characteristic, Utils.checkSum("515200000000a3"));
-            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Gl.stringValue);
+            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Gl.stringValue, bleDevice.getMac(), bleDevice.getName());
         }
     }
 

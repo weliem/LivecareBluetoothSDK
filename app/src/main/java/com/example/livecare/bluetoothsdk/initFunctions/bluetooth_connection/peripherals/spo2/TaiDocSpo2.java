@@ -100,7 +100,7 @@ public class TaiDocSpo2 {
                 objectMap.put("oxygen", resultOxygen);
                 objectMap.put("pulse", resultPulseRate);
                 objectMap.put("pi", null);
-                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.SpO2.stringValue);
+                bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.SpO2.stringValue, bleDevice.getMac(), bleDevice.getName());
                 startWriteCommand(characteristic, checkSum("515200000000a3"));
             }
         }

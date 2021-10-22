@@ -76,7 +76,7 @@ public class ThermometerAET {
         Map<String, Object> objectMap = new HashMap<>();
         objectMap.put("temperature", temp);
         objectMap.put("location", "Forehead");
-        bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Temp.stringValue);
+        bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.Temp.stringValue, bleDevice.getMac(), bleDevice.getName());
         BleManager.getInstance().disconnect(bleDevice);
     }
 }

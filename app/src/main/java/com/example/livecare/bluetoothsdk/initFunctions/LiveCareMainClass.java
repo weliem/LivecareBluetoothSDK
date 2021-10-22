@@ -8,12 +8,18 @@ import android.content.IntentFilter;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothConnection;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothDataResult;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.ScaleViatom;
+import com.example.livecare.bluetoothsdk.initFunctions.data.network.APIClient;
+import com.example.livecare.bluetoothsdk.initFunctions.data.local.PrefManager;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.data.BleDevice;
 import java.util.Map;
 import java.util.Objects;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_SMG4;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_VIATOM;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.auth_token;
 
 public class LiveCareMainClass {
     private Application application;
@@ -35,8 +41,34 @@ public class LiveCareMainClass {
         IntentFilter filter = new IntentFilter();
         filter.addAction("update.ui.with.device");
         app.registerReceiver(bluetoothDeviceReceiver, filter);
-        Utils.startTeleHealthService();
         bluetoothConnection = new BluetoothConnection(this,bluetoothDataResult,app);
+        if(PrefManager.getStringValue(auth_token).equals("")){
+            authenticateUser();
+        }else {
+            Utils.startTeleHealthService();
+        }
+        Utils.startTeleHealthService();
+    }
+
+    private void authenticateUser(){
+        Call<Object> call = APIClient.getData().authenticateUser("","");
+        call.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                if(response.isSuccessful()){
+                    bluetoothDataResult.authenticationOnSuccess();
+                    PrefManager.setStringValue(auth_token,"");
+                    Utils.startTeleHealthService();
+                }else {
+                    bluetoothDataResult.authenticationOnFailure(response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+                bluetoothDataResult.authenticationOnFailure(t.getMessage());
+            }
+        });
     }
 
     private final BroadcastReceiver bluetoothDeviceReceiver = new BroadcastReceiver() {

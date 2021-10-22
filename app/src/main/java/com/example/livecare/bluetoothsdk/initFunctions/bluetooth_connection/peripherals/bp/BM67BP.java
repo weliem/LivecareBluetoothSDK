@@ -75,7 +75,7 @@ public class BM67BP {
             objectMap.put("dia", resultDia);
             objectMap.put("pulse", resultPulse);
             objectMap.put("ahr", "");
-            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.BP.stringValue);
+            bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.BP.stringValue, bleDevice.getMac(), bleDevice.getName());
         }
     }
 }

@@ -153,7 +153,7 @@ public class IndieScale {
     private void updateScaleResultToFireBase(String weight) {
         Map<String, Object> objectMap = new HashMap<>();
         objectMap.put("weight", weight);
-        bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.WS.stringValue);
+        bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.WS.stringValue, bleDevice.getMac(), bleDevice.getName());
     }
 
     private String setDateTimeCommand() {

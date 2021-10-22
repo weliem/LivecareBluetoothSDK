@@ -107,7 +107,7 @@ public class ScanSPO2 {
                     objectMap.put("oxygen", String.valueOf(oxygen));
                     objectMap.put("pulse", String.valueOf(pulseRate));
                     objectMap.put("pi", String.valueOf(pi));
-                    bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.SpO2.stringValue);
+                    bluetoothConnection.onDataReceived(objectMap, TypeBleDevices.SpO2.stringValue, bleDevice.getMac(), bleDevice.getName());
                     BleManager.getInstance().disconnect(bleDevice);
                 }
             }

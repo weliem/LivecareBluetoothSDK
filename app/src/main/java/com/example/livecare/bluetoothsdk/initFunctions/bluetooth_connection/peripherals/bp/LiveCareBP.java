@@ -112,7 +112,7 @@ public class LiveCareBP {
                         startWrite(characteristicWrite, setDateTimeCommand());
 
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                            bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.BP.stringValue);
+                            bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.BP.stringValue, bleDevice.getMac(), bleDevice.getName());
                             startWrite(characteristicWrite, endCommand);
                         }, 2000);
                     }
@@ -180,7 +180,7 @@ public class LiveCareBP {
         if(!reason.equals("dataSentSuccessfully")){
             dataMap = new HashMap<>();
             dataMap.put("error",reason);
-            bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.BP.stringValue);
+            bluetoothConnection.onDataReceived(dataMap, TypeBleDevices.BP.stringValue, bleDevice.getMac(), bleDevice.getName());
         }
     }
 }
