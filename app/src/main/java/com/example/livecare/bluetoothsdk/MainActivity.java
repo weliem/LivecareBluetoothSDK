@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initProcess() {
-        LiveCareMainClass.getInstance().init(getApplication(),new BluetoothDataResult() {
+        LiveCareMainClass.getInstance().init(getApplication()," ",new BluetoothDataResult() {
             @Override
             public void authenticationOnSuccess() {
                 Log.d(TAG, "authenticationOnSuccess");

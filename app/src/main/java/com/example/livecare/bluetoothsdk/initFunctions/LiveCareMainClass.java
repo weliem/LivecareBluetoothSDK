@@ -39,7 +39,7 @@ public class LiveCareMainClass {
         private static final LiveCareMainClass liveCareMainClass = new LiveCareMainClass();
     }
 
-    public void init(Application app, BluetoothDataResult bluetoothDataResult) {
+    public void init(Application app, String code, BluetoothDataResult bluetoothDataResult) {
         application = app;
         this.bluetoothDataResult = bluetoothDataResult;
         IntentFilter filter = new IntentFilter();
