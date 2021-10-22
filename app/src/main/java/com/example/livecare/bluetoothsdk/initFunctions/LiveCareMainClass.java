@@ -22,6 +22,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_SMG4;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_VIATOM;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.auth_refresh_token;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.auth_token;
 
 public class LiveCareMainClass {
@@ -61,6 +62,7 @@ public class LiveCareMainClass {
                 if(response.isSuccessful()){
                     bluetoothDataResult.authenticationOnSuccess();
                     PrefManager.setStringValue(auth_token,"value");
+                    PrefManager.setStringValue(auth_refresh_token,"value");
                     Utils.startTeleHealthService();
                 }else {
                     bluetoothDataResult.authenticationOnFailure(response.message());

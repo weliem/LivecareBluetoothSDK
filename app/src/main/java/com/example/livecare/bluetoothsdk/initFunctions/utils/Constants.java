@@ -91,5 +91,5 @@ public class Constants {
 
     /////////////////pref Manager keys////////////
     public static final String auth_token = "auth_token";
-    public static final String telehealth_ble_id = "telehealth_ble_id";
+    public static final String auth_refresh_token = "auth_refresh_token";
 }
