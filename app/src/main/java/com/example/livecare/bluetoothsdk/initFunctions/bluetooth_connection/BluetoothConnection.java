@@ -61,8 +61,6 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.VicksTemp;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.wrist.FitnessTrackerLintelek;
 import com.example.livecare.bluetoothsdk.initFunctions.data.local.DBManager;
-import com.example.livecare.bluetoothsdk.initFunctions.data.local.DatabaseHelper;
-import com.example.livecare.bluetoothsdk.initFunctions.data.local.DbHelper;
 import com.example.livecare.bluetoothsdk.initFunctions.data.model.DataResultModel;
 import com.example.livecare.bluetoothsdk.initFunctions.data.network.APIClient;
 import com.example.livecare.bluetoothsdk.initFunctions.data.local.PrefManager;
@@ -73,15 +71,12 @@ import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.callback.BleGattCa
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.data.BleDevice;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.exception.BleException;
 import com.google.gson.Gson;
-
+import androidx.annotation.NonNull;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Map;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_AD_UA_651BLE;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BC57;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_BLOOD_PRESSURE_BEURER_BM67;
@@ -144,12 +139,13 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_VIATOM;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_V_ALERT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.auth_token;
-import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.telehealth_ble_id;
 
 public class BluetoothConnection {
     private String TAG = "BluetoothConnection";
     private LiveCareMainClass liveCareMainClass;
     private Application app;
+    private DBManager dbManager;
+    private int pinDevice = 0;
     private int failFlagCount = 0;
     private BluetoothDataResult bluetoothDataResult;
     private BPAndesFit bpAndesFit;
@@ -178,6 +174,8 @@ public class BluetoothConnection {
         this.app = app;
         this.liveCareMainClass = liveCareMainClass;
         this.bluetoothDataResult = bluetoothDataResult;
+        dbManager = new DBManager(app);
+        dbManager.open();
     }
 
     public void addDeviceFromScanning(BleDevice bleDevice, String devicesOrigin, String deviceName) {
@@ -541,89 +539,33 @@ public class BluetoothConnection {
         }
     }
 
+
     private void sendDataResult(Map<String, Object> data, String deviceType, String mac, String deviceName, long createdAt){
         DataResultModel dataResultModel = new DataResultModel(data, deviceType, mac, deviceName, createdAt);
-
-        DBManager dbManager = new DBManager(app);
-        dbManager.open();
         dbManager.insert(dataResultModel);
 
-       // Log.d(TAG, "sendDataResult fetch: "+dbManager.dataResultModel(dataResultModel.getId()));
-       // new DbHelper(app).insertResult(dataResultModel);
         Log.d(TAG, "sendDataResult: "+ new Gson().toJson(dataResultModel));
-        Log.d(TAG, "sendDataResult fetch: "+ dbManager.dataResultModel(dataResultModel.getId()));
-       // Log.d(TAG, "sendDataResult fetch: "+ dbManager.fetch().getString(dbManager.fetch().getColumnIndex(DatabaseHelper.COLUMN_BT_MAC)));
+        Log.d(TAG, "sendDataResult fetch: "+new Gson().toJson(dbManager.dataResultModel()));
 
 
-        Call<Object> call = APIClient.getData().sendDataResult(PrefManager.getStringValue(auth_token),"");
+        Call<Object> call = APIClient.getData().sendDataResult(PrefManager.getStringValue(auth_token),dbManager.dataResultModel());
         call.enqueue(new Callback<Object>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
+            public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
                 if(response.isSuccessful()){
-                    //delete local
-
-                }else {
-
+                    dbManager.delete();
                 }
+                //if response specific code close the gates!!!
             }
 
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(@NonNull Call<Object> call, @NonNull Throwable t) {
 
             }
         });
     }
 
-    public void onDestroy() {
-        liveCareMainClass = null;
 
-        if (bpAndesFit != null) {
-            bpAndesFit.onDestroy();
-        }
-
-        if (spirometerAndesFit != null) {
-            spirometerAndesFit.onDestroy();
-        }
-
-        if (po60SPO2 != null) {
-            po60SPO2.onDestroy();
-        }
-
-        if (indieGlucometer != null) {
-            indieGlucometer.onDestroy();
-        }
-
-        if (indieScale != null) {
-            indieScale.onDestroy();
-        }
-
-        if (jumperScale != null) {
-            jumperScale.onDestroy();
-        }
-
-        if (ad_bp_ua_651BLE != null) {
-            ad_bp_ua_651BLE.onDestroy();
-        }
-
-        if (ad_scale_uc_352BLE != null) {
-            ad_scale_uc_352BLE.onDestroy();
-        }
-
-        /*if (omronBP != null) {
-            omronBP.onDestroy();
-        }
-
-        if (vivaLNKTemperature != null) {
-            vivaLNKTemperature.onDestroy();
-        }
-
-        if (vivaLNKECGBackground != null) {
-            vivaLNKECGBackground.onDestroy();
-        }*/
-
-    }
-
-    private int pinDevice = 0;
     public void setPin(BluetoothDevice device, int deviceFlag) {
         pinDevice = deviceFlag;
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
@@ -675,5 +617,55 @@ public class BluetoothConnection {
         } else if (deviceFlag == 7) {
             oneTouchGlucometer.startNotifyCustom();
         }
+    }
+
+    public void onDestroy() {
+        dbManager.close();
+        liveCareMainClass = null;
+
+        if (bpAndesFit != null) {
+            bpAndesFit.onDestroy();
+        }
+
+        if (spirometerAndesFit != null) {
+            spirometerAndesFit.onDestroy();
+        }
+
+        if (po60SPO2 != null) {
+            po60SPO2.onDestroy();
+        }
+
+        if (indieGlucometer != null) {
+            indieGlucometer.onDestroy();
+        }
+
+        if (indieScale != null) {
+            indieScale.onDestroy();
+        }
+
+        if (jumperScale != null) {
+            jumperScale.onDestroy();
+        }
+
+        if (ad_bp_ua_651BLE != null) {
+            ad_bp_ua_651BLE.onDestroy();
+        }
+
+        if (ad_scale_uc_352BLE != null) {
+            ad_scale_uc_352BLE.onDestroy();
+        }
+
+        /*if (omronBP != null) {
+            omronBP.onDestroy();
+        }
+
+        if (vivaLNKTemperature != null) {
+            vivaLNKTemperature.onDestroy();
+        }
+
+        if (vivaLNKECGBackground != null) {
+            vivaLNKECGBackground.onDestroy();
+        }*/
+
     }
 }

@@ -1,5 +1,9 @@
 package com.example.livecare.bluetoothsdk.initFunctions.data.network;
 
+import com.example.livecare.bluetoothsdk.initFunctions.data.model.DataResultModel;
+
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -10,5 +14,5 @@ public interface RestRetrofitAPI {
     Call<Object> authenticateUser(@Header("Authorization") String bearerToken, @Query("code") String code);
 
     @POST("patients/subscriptionActivate")
-    Call<Object> sendDataResult(@Header("Authorization") String bearerToken, @Query("code") String code);
+    Call<Object> sendDataResult(@Header("Authorization") String bearerToken, @Query("dataResultModels") List<DataResultModel> dataResultModels);
 }

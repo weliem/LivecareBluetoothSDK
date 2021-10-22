@@ -13,8 +13,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Table columns
     static final String _ID = "_id";
     static final String COLUMN_TYPE = "type";
-    public static final String COLUMN_BT_MAC = "mac";
+    static final String COLUMN_BT_MAC = "mac";
     static final String COLUMN_BT_NAME = "name";
+    static final String COLUMN_DATA = "data";
     static final String COLUMN_USER_CREATED_AT = "created_at";
 
 
@@ -30,10 +31,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_TYPE + " TEXT NOT NULL, "
             + COLUMN_BT_MAC + " TEXT NOT NULL, "
             + COLUMN_BT_NAME + " TEXT NOT NULL, "
+            + COLUMN_DATA + " TEXT NOT NULL, "
             + COLUMN_USER_CREATED_AT + " LONG" +
             ");";
 
-    public DatabaseHelper(Context context) {
+    DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
