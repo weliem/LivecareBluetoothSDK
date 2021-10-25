@@ -37,13 +37,13 @@ public class MainActivity extends AppCompatActivity {
     private void initProcess() {
         LiveCareMainClass.getInstance().init(getApplication()," ",new BluetoothDataResult() {
             @Override
-            public void authenticationOnSuccess() {
-                Log.d(TAG, "authenticationOnSuccess");
+            public void authenticationStatus(String status) {
+                Log.d(TAG, "authenticationStatus: "+status);
             }
 
             @Override
-            public void authenticationOnFailure(String message) {
-                Log.d(TAG, "authenticationOnFailure: "+message);
+            public void onScanningStatus(String onScan) {
+                Log.d(TAG, "onScanningStatus: "+onScan);
             }
 
             @Override

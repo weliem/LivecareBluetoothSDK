@@ -3,9 +3,9 @@ package com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection;
 import java.util.Map;
 
 public interface BluetoothDataResult {
-    void authenticationOnSuccess();
+    void authenticationStatus(String s);
 
-    void authenticationOnFailure(String message);
+    void onScanningStatus(String onScan);
 
     void onStartConnect(String deviceName);
     

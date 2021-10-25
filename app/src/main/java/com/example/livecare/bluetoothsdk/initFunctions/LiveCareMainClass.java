@@ -44,6 +44,7 @@ public class LiveCareMainClass {
         this.bluetoothDataResult = bluetoothDataResult;
         IntentFilter filter = new IntentFilter();
         filter.addAction("update.ui.with.device");
+        filter.addAction("update.scanning.stage");
         app.registerReceiver(bluetoothDeviceReceiver, filter);
         bluetoothConnection = new BluetoothConnection(this,bluetoothDataResult,app);
         if(PrefManager.getStringValue(auth_token).equals("")){
@@ -60,18 +61,18 @@ public class LiveCareMainClass {
             @Override
             public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
                 if(response.isSuccessful()){
-                    bluetoothDataResult.authenticationOnSuccess();
+                    bluetoothDataResult.authenticationStatus("On Success");
                     PrefManager.setStringValue(auth_token,"value");
                     PrefManager.setStringValue(auth_refresh_token,"value");
                     Utils.startTeleHealthService();
                 }else {
-                    bluetoothDataResult.authenticationOnFailure(response.message());
+                    bluetoothDataResult.authenticationStatus(response.message());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Object> call, @NonNull Throwable t) {
-                bluetoothDataResult.authenticationOnFailure(t.getMessage());
+                bluetoothDataResult.authenticationStatus(t.getMessage());
             }
         });
     }
@@ -80,24 +81,34 @@ public class LiveCareMainClass {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            String deviceName = intent.getStringExtra("deviceName");
-            String devicesOrigin = intent.getStringExtra("devicesOrigin");
-            BleDevice bleDevice = intent.getExtras().getParcelable("bluetoothDevice");
+            if(intent.getAction()!=null){
+                if(intent.getAction().equals("update.ui.with.device")){
+                    String deviceName = intent.getStringExtra("deviceName");
+                    String devicesOrigin = intent.getStringExtra("devicesOrigin");
+                    BleDevice bleDevice = intent.getExtras().getParcelable("bluetoothDevice");
 
-            switch (Objects.requireNonNull(devicesOrigin)) {
-                case "2":
-                    bluetoothConnection.addDeviceFromScanning(bleDevice, devicesOrigin,deviceName);
-                    break;
-
-                case "3":
-                    if(Objects.requireNonNull(bleDevice).getName()!= null){
-                        if (bleDevice.getName().equals(BLE_SCALE_VIATOM) || bleDevice.getName().equals(BLE_SCALE_SMG4)) {
-                            scaleViatom = new ScaleViatom(LiveCareMainClass.this,  bleDevice);
+                    switch (Objects.requireNonNull(devicesOrigin)) {
+                        case "2":
+                            bluetoothConnection.addDeviceFromScanning(bleDevice, devicesOrigin,deviceName);
                             break;
-                        }
+
+                        case "3":
+                            if(Objects.requireNonNull(bleDevice).getName()!= null){
+                                if (bleDevice.getName().equals(BLE_SCALE_VIATOM) || bleDevice.getName().equals(BLE_SCALE_SMG4)) {
+                                    scaleViatom = new ScaleViatom(LiveCareMainClass.this,  bleDevice);
+                                    break;
+                                }
+                            }
+                            break;
                     }
-                    break;
+                } else {
+                    bluetoothDataResult.onScanningStatus(intent.getStringExtra("onScan"));
+                }
             }
+
+
+
+
         }
     };
 

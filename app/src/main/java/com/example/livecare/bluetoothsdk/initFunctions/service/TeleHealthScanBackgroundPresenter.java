@@ -156,6 +156,8 @@ public class TeleHealthScanBackgroundPresenter {
                     Log.d(TAG, "onScanStarted scan started: "+success);
                     if (!success) {
                         Utils.resetTeleHealthService();
+                    }else {
+                        updateScanningStage("onScanStarted");
                     }
                 }
 
@@ -173,6 +175,7 @@ public class TeleHealthScanBackgroundPresenter {
                 @Override
                 public void onScanFinished(List<BleDevice> scanResultList) {
                     Log.d(TAG, "onScanFinished: ");
+                    updateScanningStage("onScanFinished");
                     if (scanResultList.isEmpty() && teleHealthService != null && !isAnyDeviceConnected()) {
                         teleHealthService.resetBluetooth();
                     } else {
@@ -185,6 +188,13 @@ public class TeleHealthScanBackgroundPresenter {
         } else {
             Utils.resetTeleHealthService();
         }
+    }
+
+    private void updateScanningStage(String stage){
+        Intent local = new Intent();
+        local.setAction("update.scanning.stage");
+        local.putExtra("onScan", stage);
+        teleHealthService.sendBroadcast(local);
     }
 
     private boolean isAnyDeviceConnected() {
