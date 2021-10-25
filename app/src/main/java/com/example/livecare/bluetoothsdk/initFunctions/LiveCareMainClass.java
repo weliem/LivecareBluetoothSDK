@@ -5,12 +5,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.provider.Settings;
+import android.util.Base64;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothConnection;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothDataResult;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.ScaleViatom;
+import com.example.livecare.bluetoothsdk.initFunctions.data.model.AuthTokenModel;
 import com.example.livecare.bluetoothsdk.initFunctions.data.network.APIClient;
 import com.example.livecare.bluetoothsdk.initFunctions.data.local.PrefManager;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
@@ -39,7 +43,7 @@ public class LiveCareMainClass {
         private static final LiveCareMainClass liveCareMainClass = new LiveCareMainClass();
     }
 
-    public void init(Application app, String code, BluetoothDataResult bluetoothDataResult) {
+    public void init(Application app, String key, String secret, BluetoothDataResult bluetoothDataResult) {
         application = app;
         this.bluetoothDataResult = bluetoothDataResult;
         IntentFilter filter = new IntentFilter();
@@ -48,30 +52,35 @@ public class LiveCareMainClass {
         app.registerReceiver(bluetoothDeviceReceiver, filter);
         bluetoothConnection = new BluetoothConnection(this,bluetoothDataResult,app);
         if(PrefManager.getStringValue(auth_token).equals("")){
-            authenticateUser();
+            authenticateUser(key,secret);
         }else {
             Utils.startTeleHealthService();
         }
-        Utils.startTeleHealthService();
     }
 
-    private void authenticateUser(){
-        Call<Object> call = APIClient.getData().authenticateUser("","");
-        call.enqueue(new Callback<Object>() {
+    private void authenticateUser(String key, String secret){
+        String secret_key = key + ":" + secret;
+        String authHeader = "Basic " + Base64.encodeToString(secret_key.getBytes(), Base64.NO_WRAP);
+
+
+        Call<AuthTokenModel> call = APIClient.getData().authenticateUser(authHeader,"client_credentials",
+                Settings.Secure.getString(application.getContentResolver(), Settings.Secure.ANDROID_ID));
+        call.enqueue(new Callback<AuthTokenModel>() {
             @Override
-            public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
+            public void onResponse(@NonNull Call<AuthTokenModel> call, @NonNull Response<AuthTokenModel> response) {
                 if(response.isSuccessful()){
                     bluetoothDataResult.authenticationStatus("On Success");
-                    PrefManager.setStringValue(auth_token,"value");
-                    PrefManager.setStringValue(auth_refresh_token,"value");
+                    assert response.body() != null;
+                    PrefManager.setStringValue(auth_token, response.body().getToken());
+                    PrefManager.setStringValue(auth_refresh_token,response.body().getRefresh_token());
                     Utils.startTeleHealthService();
                 }else {
-                    bluetoothDataResult.authenticationStatus(response.message());
+                    bluetoothDataResult.authenticationStatus("On Error");
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<Object> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<AuthTokenModel> call, @NonNull Throwable t) {
                 bluetoothDataResult.authenticationStatus(t.getMessage());
             }
         });
@@ -112,8 +121,9 @@ public class LiveCareMainClass {
         }
     };
 
-    public void onDataReceived(Map<String, Object> objectMap, String deviceName) {
+    public void onDataReceived(Map<String, Object> objectMap, String deviceName, String mac, String name) {
         bluetoothDataResult.onDataReceived(objectMap, deviceName);
+        bluetoothConnection.onDataReceived(objectMap, deviceName, mac, name);
     }
 
     public void destroy(){

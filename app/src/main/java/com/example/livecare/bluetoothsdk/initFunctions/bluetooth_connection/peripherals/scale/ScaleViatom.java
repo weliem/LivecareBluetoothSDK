@@ -89,7 +89,7 @@ public class ScaleViatom {
         float weightLbs = (float) (weight * 0.1 * 2.20462);
         Map<String, Object> objectMap = new HashMap<>();
         objectMap.put("weight", weightLbs);
-        liveCareMainClass.onDataReceived(objectMap, TypeBleDevices.WS.stringValue);
+        liveCareMainClass.onDataReceived(objectMap, TypeBleDevices.WS.stringValue,bleDevice.getMac(),bleDevice.getName());
         Constants.currentTimeForLastTelehealthServiceScale = Calendar.getInstance().getTime().getTime();
         onDestroy();
     }

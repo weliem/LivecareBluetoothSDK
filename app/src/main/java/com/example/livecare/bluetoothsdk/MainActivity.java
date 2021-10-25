@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkAndRequestForPermission();
+
     }
 
     public void checkAndRequestForPermission() {
@@ -35,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initProcess() {
-        LiveCareMainClass.getInstance().init(getApplication()," ",new BluetoothDataResult() {
+        LiveCareMainClass.getInstance().init(getApplication(),"h7dZjuC80Qauwnit4ruR",
+                "LOZ+oa8djS6mp8lCei/AkfUwCB/KP43kBqoJJli7LlxsJQoPioFzXP71CVux+91WIIpy1zz4bP/F+6qgX+1bJA==",new BluetoothDataResult() {
             @Override
             public void authenticationStatus(String status) {
                 Log.d(TAG, "authenticationStatus: "+status);

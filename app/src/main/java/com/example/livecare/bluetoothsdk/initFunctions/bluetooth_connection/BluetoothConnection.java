@@ -7,6 +7,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.provider.Settings;
+import android.util.Base64;
 import android.util.Log;
 import com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.bp.AD_BP_UA_651BLE;
@@ -61,6 +63,7 @@ import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peri
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.temp.VicksTemp;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.wrist.FitnessTrackerLintelek;
 import com.example.livecare.bluetoothsdk.initFunctions.data.local.DBManager;
+import com.example.livecare.bluetoothsdk.initFunctions.data.model.AuthTokenModel;
 import com.example.livecare.bluetoothsdk.initFunctions.data.model.DataResultModel;
 import com.example.livecare.bluetoothsdk.initFunctions.data.network.APIClient;
 import com.example.livecare.bluetoothsdk.initFunctions.data.local.PrefManager;
@@ -138,6 +141,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_UNAAN;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_THERMOMETER_VIATOM;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_V_ALERT;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.auth_refresh_token;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.auth_token;
 
 public class BluetoothConnection {
@@ -539,29 +543,53 @@ public class BluetoothConnection {
         }
     }
 
-
     private void sendDataResult(Map<String, Object> data, String deviceType, String mac, String deviceName, long createdAt){
         DataResultModel dataResultModel = new DataResultModel(data, deviceType, mac, deviceName, createdAt);
         dbManager.insert(dataResultModel);
 
-        Log.d(TAG, "sendDataResult: "+ new Gson().toJson(dataResultModel));
-        Log.d(TAG, "sendDataResult fetch: "+new Gson().toJson(dbManager.dataResultModel()));
 
-
-        Call<Object> call = APIClient.getData().sendDataResult(PrefManager.getStringValue(auth_token),dbManager.dataResultModel());
+        Call<Object> call = APIClient.getData().sendDataResult("Bearer " +PrefManager.getStringValue(auth_token), dbManager.dataResultModel(),
+                Settings.Secure.getString(app.getContentResolver(), Settings.Secure.ANDROID_ID));
         call.enqueue(new Callback<Object>() {
             @Override
             public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
                 if(response.isSuccessful()){
                     dbManager.delete();
+                }else {
+                    authenticateUser();
                 }
-                //if response specific code close the gates!!!
-                // PrefManager.setStringValue(auth_token,"");
             }
 
             @Override
             public void onFailure(@NonNull Call<Object> call, @NonNull Throwable t) {
 
+            }
+        });
+    }
+
+    private void authenticateUser(){
+        String authHeader = "Bearer " + PrefManager.getStringValue(auth_refresh_token);
+        Call<AuthTokenModel> call = APIClient.getData().authenticateUser(authHeader,"refresh_token",
+                Settings.Secure.getString(app.getContentResolver(), Settings.Secure.ANDROID_ID));
+        call.enqueue(new Callback<AuthTokenModel>() {
+            @Override
+            public void onResponse(@NonNull Call<AuthTokenModel> call, @NonNull Response<AuthTokenModel> response) {
+                if(response.isSuccessful()){
+                    assert response.body() != null;
+                    PrefManager.setStringValue(auth_token, response.body().getToken());
+                    PrefManager.setStringValue(auth_refresh_token,response.body().getRefresh_token());
+                    Utils.startTeleHealthService();
+                }else {
+                    PrefManager.setStringValue(auth_token, "");
+                    PrefManager.setStringValue(auth_refresh_token, "");
+                    Utils.stopTeleHealthService();
+                    bluetoothDataResult.authenticationStatus(response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<AuthTokenModel> call, @NonNull Throwable t) {
+                bluetoothDataResult.authenticationStatus(t.getMessage());
             }
         });
     }

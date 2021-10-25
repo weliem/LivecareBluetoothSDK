@@ -191,10 +191,12 @@ public class TeleHealthScanBackgroundPresenter {
     }
 
     private void updateScanningStage(String stage){
-        Intent local = new Intent();
-        local.setAction("update.scanning.stage");
-        local.putExtra("onScan", stage);
-        teleHealthService.sendBroadcast(local);
+        if(teleHealthService!=null){
+            Intent local = new Intent();
+            local.setAction("update.scanning.stage");
+            local.putExtra("onScan", stage);
+            teleHealthService.sendBroadcast(local);
+        }
     }
 
     private boolean isAnyDeviceConnected() {

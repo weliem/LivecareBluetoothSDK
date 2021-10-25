@@ -14,7 +14,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    def baseUrl = "https://admin.live-care.co/"
+    def baseUrl = "https://a43e-98-116-188-147.ngrok.io/"
     buildTypes {
         release {
             minifyEnabled true
