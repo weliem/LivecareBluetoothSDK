@@ -5,7 +5,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.livecare.bluetoothsdk"
+         applicationId "com.example.livecare.bluetoothsdk"
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
@@ -14,7 +14,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    def baseUrl = "https://a43e-98-116-188-147.ngrok.io/"
+    def baseUrl = "https://admin.live-care.co/"
     buildTypes {
         release {
             minifyEnabled true

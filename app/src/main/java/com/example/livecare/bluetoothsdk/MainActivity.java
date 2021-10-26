@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initProcess() {
-        LiveCareMainClass.getInstance().init(getApplication(),"h7dZjuC80Qauwnit4ruR",
-                "LOZ+oa8djS6mp8lCei/AkfUwCB/KP43kBqoJJli7LlxsJQoPioFzXP71CVux+91WIIpy1zz4bP/F+6qgX+1bJA==",new BluetoothDataResult() {
+        LiveCareMainClass.getInstance().init(getApplication(),"SGA5v3ijooU0qGhiPVAh",
+                "yBF6CvN+ebIiJhEOzy1rAFePS15opLxIg/mUCPgYpjjvMShdxK/pTUsmpVYcbzFl5ClwE4N9+97n7y8inuUApA==",new BluetoothDataResult() {
             @Override
             public void authenticationStatus(String status) {
                 Log.d(TAG, "authenticationStatus: "+status);

@@ -73,7 +73,6 @@ import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.callback.BleGattCallback;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.data.BleDevice;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.exception.BleException;
-import com.google.gson.Gson;
 import androidx.annotation.NonNull;
 import java.util.Calendar;
 import java.util.Map;
@@ -145,7 +144,6 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.au
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.auth_token;
 
 public class BluetoothConnection {
-    private String TAG = "BluetoothConnection";
     private LiveCareMainClass liveCareMainClass;
     private Application app;
     private DBManager dbManager;
@@ -184,24 +182,20 @@ public class BluetoothConnection {
 
     public void addDeviceFromScanning(BleDevice bleDevice, String devicesOrigin, String deviceName) {
         Utils.teleHealthScanBroadcastReceiver(false);
-        Log.d(TAG, "addDeviceFromScanning: "+devicesOrigin);
         if (!BleManager.getInstance().getIsConnecting()){
             connect(deviceName, bleDevice);
         }
     }
 
     private void connect(String deviceName, final BleDevice bleDevice) {
-        Log.d(TAG, "connect bleDevice: "+ bleDevice.getName());
         BleManager.getInstance().connect(bleDevice, new BleGattCallback() {
             @Override
             public void onStartConnect() {
-                Log.d(TAG, "connect onStartConnect: ");
                 bluetoothDataResult.onStartConnect(deviceName);
             }
 
             @Override
             public void onConnectFail(BleDevice bleDevice, BleException exception) {
-                Log.d(TAG, "connect onConnectFail: "+ exception.getDescription());
                 if (BLE_BlOOD_PRESSURE_BP.equalsIgnoreCase(bleDevice.getName())) {
                     if (exception.getDescription().equalsIgnoreCase("Timeout Exception Occurred!")) {
                         connect(deviceName, bleDevice);
@@ -224,7 +218,6 @@ public class BluetoothConnection {
 
             @Override
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
-                Log.d(TAG, "connect onConnectSuccess: ");
                 bluetoothDataResult.OnConnectedSuccess(deviceName);
                 if (gatt != null) {
                     onConnectedSuccess(bleDevice, gatt);
@@ -236,7 +229,6 @@ public class BluetoothConnection {
 
             @Override
             public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status, int disconnectFlag) {
-                Log.d(TAG, "connect onDisConnected: isActiveDisConnected " + isActiveDisConnected + " bleDevice " + bleDevice.getName() + " status " + status + " disconnectFlag "+disconnectFlag);
                 bluetoothDataResult.onDisConnected(deviceName);
                 sendDataOnDisconnect(bleDevice);
                 Utils.setTimeOnDisconnect(bleDevice.getName());
@@ -458,7 +450,7 @@ public class BluetoothConnection {
                 default:
                     if (device.getName().contains(BLE_OMRON_BP1) || device.getName().contains(BLE_OMRON_BP2) ||
                             device.getName().contains(BLE_OMRON_BP3) || device.getName().contains(BLE_OMRON_BP4)) {
-                        Log.d(TAG, "onConnectedSuccess: BLE_OMRON_BP");
+
                         //omronBP = new OmronBP(bluetoothConnectionFragment, mContext, deviceName);
                        // omronBP.onConnectedSuccess(device, gatt);
                     } else if(device.getName().startsWith(BLE_GLUCOMETER_CARESENS_S)){
@@ -583,7 +575,7 @@ public class BluetoothConnection {
                     PrefManager.setStringValue(auth_token, "");
                     PrefManager.setStringValue(auth_refresh_token, "");
                     Utils.stopTeleHealthService();
-                    bluetoothDataResult.authenticationStatus(response.message());
+                    bluetoothDataResult.authenticationStatus("on Error");
                 }
             }
 
@@ -613,18 +605,15 @@ public class BluetoothConnection {
                 switch(state){
                     case BluetoothDevice.BOND_BONDING:
                         // Bonding...
-                        Log.d(TAG, "onReceive: Bonding");
                         break;
 
                     case BluetoothDevice.BOND_BONDED:
                         // Bonded...
-                        Log.d(TAG, "onReceive: Bonded");
                         app.unregisterReceiver(mReceiver);
                         connectAfterPinSet(pinDevice);
                         break;
 
                     case BluetoothDevice.BOND_NONE:
-                        Log.d(TAG, "onReceive: BOND_NONE");
                         // Not bonded...
                         break;
                 }

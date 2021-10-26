@@ -42,7 +42,6 @@ public class TeleHealthService extends Service {
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "onCreate: TeleHealthService");
         teleHealthScanBackgroundPresenter = new TeleHealthScanBackgroundPresenter(this);
         startForegroundService();
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -107,7 +106,6 @@ public class TeleHealthService extends Service {
                     }
                 } else {
                     if (BleManager.getInstance().getBluetoothAdapter() == null) {
-                        Log.d(TAG, "run: isBlueEnable null ");
                         handler.removeCallbacks(this);
                         onCreateMethod();
                     } else {
@@ -116,7 +114,6 @@ public class TeleHealthService extends Service {
                             handler.removeCallbacks(this);
                         }
                         flag++;
-                        Log.d(TAG, "run: isBlueEnable null post delay");
                         handler.postDelayed(this, 1000);
                     }
                 }
@@ -272,7 +269,6 @@ public class TeleHealthService extends Service {
     }
 
     public boolean checkIfAppIsRunning() {
-        Log.d(TAG, "checkIfAppIsRunning: ");
         return !(!isAppOnForeground(this) && checkIfScreenIsOn());
     }
 
@@ -285,7 +281,6 @@ public class TeleHealthService extends Service {
         final String packageName = context.getPackageName();
         for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
             if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND && appProcess.processName.equals(packageName)) {
-                Log.d(TAG, "isAppOnForeground: ");
                 return true;
             }
         }

@@ -7,11 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
-
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.emergency_button.VAlertDevice;
 import com.example.livecare.bluetoothsdk.initFunctions.enums.BleDevicesName;
-import com.example.livecare.bluetoothsdk.initFunctions.enums.TypeBleDevices;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Constants;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.BleManager;
@@ -106,11 +103,9 @@ public class TeleHealthScanBackgroundPresenter {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (!intent.getBooleanExtra("startScan", false)) {
-                Log.d(TAG, "teleHealthScanBroadcastReceiver startScan = false");
                 BleManager.getInstance().cancelScan();
                 startScan = false;
             } else {
-                Log.d(TAG, "teleHealthScanBroadcastReceiver startScan = true");
                 startScan = true;
                 startScan();
             }
@@ -153,7 +148,6 @@ public class TeleHealthScanBackgroundPresenter {
             BleManager.getInstance().scan(new BleScanCallback() {
                 @Override
                 public void onScanStarted(boolean success) {
-                    Log.d(TAG, "onScanStarted scan started: "+success);
                     if (!success) {
                         Utils.resetTeleHealthService();
                     }else {
@@ -168,13 +162,11 @@ public class TeleHealthScanBackgroundPresenter {
 
                 @Override
                 public void onScanning(BleDevice bleDevice) {
-                    //Log.d(TAG, "onScanning: " + bleDevice.getName() + " mac " + bleDevice.getMac() + " start time " + startTime);
                     scanDevicesResponse(bleDevice);
                 }
 
                 @Override
                 public void onScanFinished(List<BleDevice> scanResultList) {
-                    Log.d(TAG, "onScanFinished: ");
                     updateScanningStage("onScanFinished");
                     if (scanResultList.isEmpty() && teleHealthService != null && !isAnyDeviceConnected()) {
                         teleHealthService.resetBluetooth();
@@ -226,7 +218,6 @@ public class TeleHealthScanBackgroundPresenter {
             return;
         }
         if (device.getName() != null) {
-            Log.d(TAG, "scanDevicesResponse: "+ device.getName());
             switch (device.getName()) {
                 case BLE_BlOOD_PRESSURE_BP:
                 case BLE_BlOOD_PRESSURE_ANDES_FIT:
