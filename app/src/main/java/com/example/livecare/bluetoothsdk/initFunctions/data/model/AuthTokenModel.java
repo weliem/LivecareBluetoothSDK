@@ -1,9 +1,9 @@
 package com.example.livecare.bluetoothsdk.initFunctions.data.model;
 
 public class AuthTokenModel {
-    String refresh_token;
-    String expires_in;
-    String token;
+    private String refresh_token;
+    private String expires_in;
+    private String token;
 
     public String getRefresh_token() {
         return refresh_token;

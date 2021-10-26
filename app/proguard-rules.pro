@@ -20,5 +20,6 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keep class com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass { *; }
+-keep class com.example.livecare.bluetoothsdk.initFunctions.data.model.AuthTokenModel { *; }
 -keep class com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothDataResult { *; }
 -keepattributes InnerClasses
