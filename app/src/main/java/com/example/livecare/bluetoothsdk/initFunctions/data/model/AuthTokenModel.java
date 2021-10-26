@@ -2,7 +2,7 @@ package com.example.livecare.bluetoothsdk.initFunctions.data.model;
 
 public class AuthTokenModel {
     private String refresh_token;
-    private String expires_in;
+    private Long expires_in;
     private String token;
 
     public String getRefresh_token() {
@@ -13,11 +13,11 @@ public class AuthTokenModel {
         this.refresh_token = refresh_token;
     }
 
-    public String getExpires_in() {
+    public Long getExpires_in() {
         return expires_in;
     }
 
-    public void setExpires_in(String expires_in) {
+    public void setExpires_in(Long expires_in) {
         this.expires_in = expires_in;
     }
 

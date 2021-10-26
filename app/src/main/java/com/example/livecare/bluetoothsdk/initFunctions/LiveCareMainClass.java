@@ -7,10 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.provider.Settings;
 import android.util.Base64;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
-
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothConnection;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothDataResult;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.peripherals.scale.ScaleViatom;
@@ -19,6 +16,8 @@ import com.example.livecare.bluetoothsdk.initFunctions.data.network.APIClient;
 import com.example.livecare.bluetoothsdk.initFunctions.data.local.PrefManager;
 import com.example.livecare.bluetoothsdk.initFunctions.utils.Utils;
 import com.example.livecare.bluetoothsdk.livecarebluetoothsdk.data.BleDevice;
+
+import java.util.Calendar;
 import java.util.Map;
 import java.util.Objects;
 import retrofit2.Call;
@@ -28,6 +27,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_SCALE_VIATOM;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.auth_refresh_token;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.auth_token;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.token_expires_in;
 
 public class LiveCareMainClass {
     private Application application;
@@ -62,7 +62,6 @@ public class LiveCareMainClass {
         String secret_key = key + ":" + secret;
         String authHeader = "Basic " + Base64.encodeToString(secret_key.getBytes(), Base64.NO_WRAP);
 
-
         Call<AuthTokenModel> call = APIClient.getData().authenticateUser(authHeader,"client_credentials",
                 Settings.Secure.getString(application.getContentResolver(), Settings.Secure.ANDROID_ID));
         call.enqueue(new Callback<AuthTokenModel>() {
@@ -73,6 +72,8 @@ public class LiveCareMainClass {
                     assert response.body() != null;
                     PrefManager.setStringValue(auth_token, response.body().getToken());
                     PrefManager.setStringValue(auth_refresh_token,response.body().getRefresh_token());
+                    Long expirationTime = Calendar.getInstance().getTime().getTime() + response.body().getExpires_in()+5;
+                    PrefManager.setLongValue(token_expires_in,expirationTime);
                     Utils.startTeleHealthService();
                 }else {
                     bluetoothDataResult.authenticationStatus("On Error");
@@ -114,10 +115,6 @@ public class LiveCareMainClass {
                     bluetoothDataResult.onScanningStatus(intent.getStringExtra("onScan"));
                 }
             }
-
-
-
-
         }
     };
 

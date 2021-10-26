@@ -9,9 +9,13 @@ import android.os.Bundle;
 import android.util.Log;
 import com.example.livecare.bluetoothsdk.initFunctions.LiveCareMainClass;
 import com.example.livecare.bluetoothsdk.initFunctions.bluetooth_connection.BluetoothDataResult;
+import com.example.livecare.bluetoothsdk.initFunctions.data.local.PrefManager;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.auth_token;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
@@ -21,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkAndRequestForPermission();
-
     }
 
     public void checkAndRequestForPermission() {

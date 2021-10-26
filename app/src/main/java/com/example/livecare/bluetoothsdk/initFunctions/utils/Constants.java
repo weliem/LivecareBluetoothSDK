@@ -92,4 +92,5 @@ public class Constants {
     /////////////////pref Manager keys////////////
     public static final String auth_token = "auth_token";
     public static final String auth_refresh_token = "auth_refresh_token";
+    public static final String token_expires_in = "token_expires_in";
 }

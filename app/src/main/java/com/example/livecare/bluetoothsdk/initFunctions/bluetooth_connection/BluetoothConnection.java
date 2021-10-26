@@ -142,6 +142,7 @@ import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BL
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.BLE_V_ALERT;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.auth_refresh_token;
 import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.auth_token;
+import static com.example.livecare.bluetoothsdk.initFunctions.utils.Constants.token_expires_in;
 
 public class BluetoothConnection {
     private LiveCareMainClass liveCareMainClass;
@@ -528,41 +529,55 @@ public class BluetoothConnection {
         }*/
     }
 
+    private long timeOnDataReceived = 0;
     public void onDataReceived(Map<String, Object> data, String deviceType, String mac, String name) {
         if(liveCareMainClass != null){
-            bluetoothDataResult.onDataReceived(data, deviceType);
-            sendDataResult(data,deviceType,mac,name,Calendar.getInstance().getTime().getTime());
+            if(timeOnDataReceived != 0){
+                if(Calendar.getInstance().getTime().getTime() - timeOnDataReceived > 5000){
+                    timeOnDataReceived = Calendar.getInstance().getTime().getTime();
+                    bluetoothDataResult.onDataReceived(data, deviceType);
+                    sendDataResult(data,deviceType,mac,name,Calendar.getInstance().getTime().getTime());
+                }
+            }else {
+                timeOnDataReceived = Calendar.getInstance().getTime().getTime();
+                bluetoothDataResult.onDataReceived(data, deviceType);
+                sendDataResult(data,deviceType,mac,name,Calendar.getInstance().getTime().getTime());
+            }
         }
     }
 
     private void sendDataResult(Map<String, Object> data, String deviceType, String mac, String deviceName, long createdAt){
         DataResultModel dataResultModel = new DataResultModel(data, deviceType, mac, deviceName, createdAt);
         dbManager.insert(dataResultModel);
+        String androidID = Settings.Secure.getString(app.getContentResolver(), Settings.Secure.ANDROID_ID);
+        if(Calendar.getInstance().getTime().getTime() < PrefManager.getLongValue(token_expires_in)){
 
-
-        Call<Object> call = APIClient.getData().sendDataResult("Bearer " +PrefManager.getStringValue(auth_token), dbManager.dataResultModel(),
-                Settings.Secure.getString(app.getContentResolver(), Settings.Secure.ANDROID_ID));
-        call.enqueue(new Callback<Object>() {
-            @Override
-            public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
-                if(response.isSuccessful()){
-                    dbManager.delete();
-                }else {
-                    authenticateUser();
+            Call<Object> call = APIClient.getData().sendDataResult("Bearer " +PrefManager.getStringValue(auth_token), dbManager.dataResultModel(),
+                    androidID);
+            call.enqueue(new Callback<Object>() {
+                @Override
+                public void onResponse(@NonNull Call<Object> call, @NonNull Response<Object> response) {
+                    if(response.isSuccessful()){
+                        dbManager.delete();
+                    }else {
+                        authenticateUser(data,deviceType,mac,deviceName,Calendar.getInstance().getTime().getTime(),androidID);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<Object> call, @NonNull Throwable t) {
+                @Override
+                public void onFailure(@NonNull Call<Object> call, @NonNull Throwable t) {
 
-            }
-        });
+                }
+            });
+        }else {
+            authenticateUser(data,deviceType,mac,deviceName,Calendar.getInstance().getTime().getTime(),androidID);
+        }
+
     }
 
-    private void authenticateUser(){
+    private void authenticateUser(Map<String, Object> data, String deviceType, String mac, String deviceName, long time, String androidID){
         String authHeader = "Bearer " + PrefManager.getStringValue(auth_refresh_token);
-        Call<AuthTokenModel> call = APIClient.getData().authenticateUser(authHeader,"refresh_token",
-                Settings.Secure.getString(app.getContentResolver(), Settings.Secure.ANDROID_ID));
+        Call<AuthTokenModel> call = APIClient.getData().authenticateUser(authHeader,"refresh_token", androidID);
         call.enqueue(new Callback<AuthTokenModel>() {
             @Override
             public void onResponse(@NonNull Call<AuthTokenModel> call, @NonNull Response<AuthTokenModel> response) {
@@ -570,10 +585,14 @@ public class BluetoothConnection {
                     assert response.body() != null;
                     PrefManager.setStringValue(auth_token, response.body().getToken());
                     PrefManager.setStringValue(auth_refresh_token,response.body().getRefresh_token());
+                    Long expirationTime = Calendar.getInstance().getTime().getTime() + response.body().getExpires_in()+5;
+                    PrefManager.setLongValue(token_expires_in,expirationTime);
+                    sendDataResult(data,deviceType,mac,deviceName,time);
                     Utils.startTeleHealthService();
                 }else {
                     PrefManager.setStringValue(auth_token, "");
                     PrefManager.setStringValue(auth_refresh_token, "");
+                    PrefManager.setLongValue(token_expires_in,0L);
                     Utils.stopTeleHealthService();
                     bluetoothDataResult.authenticationStatus("on Error");
                 }

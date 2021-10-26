@@ -26,6 +26,14 @@ public class PrefManager {
         editSharedPrefs().putString(key, value).commit();
     }
 
+    public static Long getLongValue(String key) {
+        return sharedPreferences.getLong(key, 0L);
+    }
+
+    public static void setLongValue(String key, Long value) {
+        editSharedPrefs().putLong(key, value).commit();
+    }
+
     public static void deleteUserInfo() {
         editSharedPrefs().clear().apply();
     }
